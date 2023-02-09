@@ -50,58 +50,81 @@ def list_tasks(_tasks):
 def add_task(name: str, description: str, due: str):
     """ Copies the TASK_TEMPLATE and fills in the passed in data then adds the task to the tasks list """
     task = TASK_TEMPLATE.copy() # don't delete this
-    # update lastActivity with the current datetime value
-    # set the name, description, and due date (all must be provided)
-    # due date must match one of the formats mentioned in str_to_datetime()
-    # add the new task to the tasks list
-    # output a message confirming the new task was added or if the addition was rejected due to missing data
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
+    lastActivity = datetime.datetime.now
+    if name&description&due != None:
+        tasks.append(name,due,lastActivity,description)
+        print("The task was added ")
+    else:
+        print("The task could not be added as it did not match the format please provide name of task description and due date in mentioned format")
+    #sg342 implemented date 8th feb 2023 used append to add the new tasks at the end of the list
     save()
 
 def process_update(index):
-    """ extracted the user input prompts to get task data then passes it to update_task() """
-    # get the task by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # show the existing value of each property where the TODOs are marked in the text of the inputs (replace the TODO related text)
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    
-    name = input(f"What's the name of this task? (TODO name) \n").strip()
-    desc = input(f"What's a brief descriptions of this task? (TODO description) \n").strip()
-    due = input(f"When is this task due (format: m/d/y H:M:S) (TODO due) \n").strip()
-    update_task(index, name=name, description=desc, due=due)
+    """ extracted the user input prompts to get task data then passes it to update_task() """    
+    if index>len(tasks):
+        print("index cannot be greater than no. of items")
+    if index<0:
+        print("please enter index no. starting from 1")
+    else:
+        task_to_update = tasks[index]
+        print("The task is",task_to_update.name)
+        print("Description: ",task_to_update.description)
+        print("Due date : ",task_to_update.due)
+        name = input(f"What's the name of this task? (TODO name) \n").strip()
+        desc = input(f"What's a brief descriptions of this task? (TODO description) \n").strip()
+        due = input(f"When is this task due (format: m/d/y H:M:S) (TODO due) \n").strip()
+        update_task(index, name=name, description=desc, due=due)
+    #sg342 8th feb 2023
 
 def update_task(index: int, name: str, description:str, due: str):
     """ Updates the name, description , due date of a task found by index if an update to the property was provided """
-    # find the task by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # update incoming task data if it's provided (if it's not provided use the original task property value)
-    # update lastActivity with the current datetime value
-    # output that the task was updated if any items were changed, otherwise mention task was not updated
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
+    if index>len(tasks):
+        print("The index cannot be greater than the no. of items in list")
+    elif index<0:
+        print("Please enter index no. starting from 1")
+    else:
+        task_to_change = tasks[index]
+        if task_to_change.name != name:
+            task_to_change.name = name
+            print("name of task was updated !!")
+        if task_to_change.description != description:
+            task_to_change.description = description
+            print("the description of task was updated !!")
+        if task_to_change.due != due:
+            task_to_change.due = due
+            print("the due date was updated..")
+        else:
+            print("Nothing was updated...")
+        task_to_change.lastActivity = datetime.datetime.now 
+    #sg342 8th feb 2023
     
     save()
 
 def mark_done(index):
     """ Updates a single task, via index, to a done datetime"""
-    # find task from list by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # if it's not done, record the current datetime as the value
-    # if it is done, print a message saying it's already completed
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-
+    if index>len(tasks):
+        print("The index cannot be greater than the no of items in list")
+    elif index<0:
+        print("Please give index no. starting from 1")
+    else:
+        finished_task = tasks[index]
+        if finished_task.done == True:
+            print("This task is already completed !!! ")
+        else:
+            finished_task.lastActivity = datetime.datetime.now
+    #sg342 8th feb 2023
     save()
 
 def view_task(index):
     """ View more info about a specific task fetch by index """
-    # find task from list by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # utilize the given print statement when a task is found
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    task = {}
-    print(f"""
+    if index>len(tasks):
+        print("The index cannot be greater than the no of items in list")
+    elif index<0:
+        print("Please give index no. starting from 1")
+    else:
+        task = tasks[index]
+        task = {}
+        print(f"""
         [{'x' if task['done'] else ' '}] Task: {task['name']}\n 
         Description: {task['description']} \n 
         Last Activity: {task['lastActivity']} \n
@@ -112,39 +135,52 @@ def view_task(index):
 
 def delete_task(index):
     """ deletes a task from the tasks list by index """
-    # delete/remove task from list by index
-    # message should show if it was successful or not
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # make sure save() is still called last in this function
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
-    
+    if index>len(tasks):
+        print("The index cannot be greater than the no of items in list")
+    elif index<0:
+        print("Please give index no. starting from 1")
+    else:
+        tasks.pop(index)
+        print("the task is successfully deleted from the tracker")
+    #sg342 8th feb 2023 using pop(index) function to delete the task
     save()
 
 def get_incomplete_tasks():
     """ prints a list of tasks that are not done """
-    # generate a list of tasks where the task is not done
-    # pass that list into list_tasks()
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
+    for i in tasks:
+        if tasks.done == False:
+            _tasks.append(tasks[i])
     _tasks = []
     list_tasks(_tasks)
+    #sg342 8th feb 2023 
 
 def get_overdue_tasks():
     """ prints a list of tasks that are over due completion (not done and expired) """
-    # generate a list of tasks where the due date is older than now and that are not complete
-    # pass that list into list_tasks()
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
+    for i in tasks:
+        if ((tasks.due>datetime.datetime.now) and (tasks.done==False)):
+            _tasks = tasks[i]
     _tasks = []
     list_tasks(_tasks)
+    #sg342 8th feb 2023
 
 def get_time_remaining(index):
     """ outputs the number of days, hours, minutes, seconds a task has before it's overdue otherwise shows similar info for how far past due it is """
-    # get the task by index
-    # consider index out of bounds scenarios and include appropriate message(s) for invalid index
-    # get the days, hours, minutes, seconds between the due date and now
-    # display the remaining time via print in a clear format showing days, hours, minutes, seconds
-    # if the due date is in the past print out how many days, hours, minutes, seconds the task is over due (clearly note that it's over due, values should be positive)
-    # include your ucid and date as a comment of when you implemented this, briefly summarize the solution
+    if index>len(tasks):
+        print("The index cannot be greater than the no of items in list")
+    elif index<0:
+        print("Please give index no. starting from 1")
+    else:
+        task_left = tasks[index]
+        due_time = task_left.due
+        time_now = datetime.datetime.now
+        if due_time>time_now:
+            time_diff = due_time-time_now
+            print("time remaining to finish the task is %d/%m/%Y %H:%M:%S  ",time_diff)
+        else:
+            time_diff = time_now - due_time
+            print("the task is over due by %d/%m/%Y %H:%M:%S ",time_diff)
     task = {}
+    #sg342 8th feb 2023
 
 # no changes needed below this line
 
