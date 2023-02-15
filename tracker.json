@@ -1,0 +1,16 @@
+[
+    {
+        "name": "study for midterm",
+        "due": "03/02/23 01:10:30",
+        "lastActivity": "2023-02-15 14:27:49.960777",
+        "description": "finish midterm course",
+        "done": false
+    },
+    {
+        "name": "yoga",
+        "due": "03/02/23 09:00:00",
+        "lastActivity": "2023-02-15 12:48:54.099206",
+        "description": "meditation & stretching for an hour",
+        "done": false
+    }
+]

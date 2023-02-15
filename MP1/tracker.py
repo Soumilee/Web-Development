@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import os
 
 tasks = []
 # constant, don't edit, use .copy()
@@ -28,6 +29,8 @@ def save():
 
 def load():
     """ loads the task list from a json file """
+    if not os.path.isfile("tracker.json"):
+        return
     f = open("tracker.json", "r")
     data = json.load(f)
     # Note about global keyword: https://stackoverflow.com/a/11867510
@@ -50,9 +53,12 @@ def list_tasks(_tasks):
 def add_task(name: str, description: str, due: str):
     """ Copies the TASK_TEMPLATE and fills in the passed in data then adds the task to the tasks list """
     task = TASK_TEMPLATE.copy() # don't delete this
-    lastActivity = datetime.datetime.now
-    if name&description&due != None:
-        tasks.append(name,due,lastActivity,description)
+    if name and description and due != None:
+        task['name'] = name
+        task['due'] = due
+        task['description'] = description
+        task['lastActivity'] = datetime.now()
+        tasks.append(task)
         print("The task was added ")
     else:
         print("The task could not be added as it did not match the format please provide name of task description and due date in mentioned format")
@@ -67,12 +73,12 @@ def process_update(index):
         print("please enter index no. starting from 1")
     else:
         task_to_update = tasks[index]
-        print("The task is",task_to_update.name)
-        print("Description: ",task_to_update.description)
-        print("Due date : ",task_to_update.due)
-        name = input(f"What's the name of this task? (TODO name) \n").strip()
-        desc = input(f"What's a brief descriptions of this task? (TODO description) \n").strip()
-        due = input(f"When is this task due (format: m/d/y H:M:S) (TODO due) \n").strip()
+        print("The task is",task_to_update["name"])
+        print("Description: ",task_to_update["description"])
+        print("Due date : ",task_to_update["due"])
+        name = input(f"What's the name of this task? \n").strip()
+        desc = input(f"What's a brief descriptions of this task? \n").strip()
+        due = input(f"When is this task due (format: m/d/y H:M:S) \n").strip()
         update_task(index, name=name, description=desc, due=due)
     #sg342 8th feb 2023
 
@@ -84,18 +90,19 @@ def update_task(index: int, name: str, description:str, due: str):
         print("Please enter index no. starting from 1")
     else:
         task_to_change = tasks[index]
-        if task_to_change.name != name:
-            task_to_change.name = name
+        if task_to_change["name"] != name:
+            task_to_change["name"] = name
             print("name of task was updated !!")
-        if task_to_change.description != description:
-            task_to_change.description = description
+        if task_to_change["description"] != description:
+            task_to_change["description"] = description
             print("the description of task was updated !!")
-        if task_to_change.due != due:
-            task_to_change.due = due
+        if task_to_change["due"] != due:
+            task_to_change["due"] = due
             print("the due date was updated..")
         else:
             print("Nothing was updated...")
-        task_to_change.lastActivity = datetime.datetime.now 
+        task_to_change["lastActivity"] = datetime.now() 
+    tasks[index] = task_to_change 
     #sg342 8th feb 2023
     
     save()
@@ -108,10 +115,10 @@ def mark_done(index):
         print("Please give index no. starting from 1")
     else:
         finished_task = tasks[index]
-        if finished_task.done == True:
+        if finished_task["done"] == True:
             print("This task is already completed !!! ")
         else:
-            finished_task.lastActivity = datetime.datetime.now
+            finished_task["lastActivity"] = datetime.now()
     #sg342 8th feb 2023
     save()
 
@@ -131,6 +138,7 @@ def view_task(index):
         Due: {task['due']}\n
         Completed: {task['done'] if task['done'] else '-'} \n
         """.replace('  ', ' '))
+    #sg342 8th feb 2023
 
 
 def delete_task(index):
@@ -140,7 +148,7 @@ def delete_task(index):
     elif index<0:
         print("Please give index no. starting from 1")
     else:
-        tasks.pop(index)
+        tasks.pop[index]
         print("the task is successfully deleted from the tracker")
     #sg342 8th feb 2023 using pop(index) function to delete the task
     save()
@@ -148,7 +156,7 @@ def delete_task(index):
 def get_incomplete_tasks():
     """ prints a list of tasks that are not done """
     for i in tasks:
-        if tasks.done == False:
+        if "done" == False:
             _tasks.append(tasks[i])
     _tasks = []
     list_tasks(_tasks)
@@ -157,7 +165,7 @@ def get_incomplete_tasks():
 def get_overdue_tasks():
     """ prints a list of tasks that are over due completion (not done and expired) """
     for i in tasks:
-        if ((tasks.due>datetime.datetime.now) and (tasks.done==False)):
+        if ("due">datetime.now()) and ("done"==False):
             _tasks = tasks[i]
     _tasks = []
     list_tasks(_tasks)
@@ -172,7 +180,7 @@ def get_time_remaining(index):
     else:
         task_left = tasks[index]
         due_time = task_left.due
-        time_now = datetime.datetime.now
+        time_now = datetime.now()
         if due_time>time_now:
             time_diff = due_time-time_now
             print("time remaining to finish the task is %d/%m/%Y %H:%M:%S  ",time_diff)
