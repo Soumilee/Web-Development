@@ -55,7 +55,7 @@ def add_task(name: str, description: str, due: str):
     task = TASK_TEMPLATE.copy() # don't delete this
     if name and description and due != None:
         task['name'] = name
-        task['due'] = due
+        task['due'] = str_to_datetime(due)
         task['description'] = description
         task['lastActivity'] = datetime.now()
         tasks.append(task)
@@ -109,16 +109,19 @@ def update_task(index: int, name: str, description:str, due: str):
 
 def mark_done(index):
     """ Updates a single task, via index, to a done datetime"""
-    if index>len(tasks):
+    if index>=len(tasks):
         print("The index cannot be greater than the no of items in list")
     elif index<0:
         print("Please give index no. starting from 1")
     else:
         finished_task = tasks[index]
-        if finished_task["done"] == True:
+        if finished_task["done"]:
             print("This task is already completed !!! ")
         else:
+            finished_task["done"] = datetime.now()
             finished_task["lastActivity"] = datetime.now()
+            print("Task marked done !!")
+    tasks[index]=finished_task
     #sg342 8th feb 2023
     save()
 
@@ -130,7 +133,6 @@ def view_task(index):
         print("Please give index no. starting from 1")
     else:
         task = tasks[index]
-        task = {}
         print(f"""
         [{'x' if task['done'] else ' '}] Task: {task['name']}\n 
         Description: {task['description']} \n 
@@ -148,17 +150,17 @@ def delete_task(index):
     elif index<0:
         print("Please give index no. starting from 1")
     else:
-        tasks.pop[index]
+        tasks.pop(index)
         print("the task is successfully deleted from the tracker")
     #sg342 8th feb 2023 using pop(index) function to delete the task
     save()
 
 def get_incomplete_tasks():
     """ prints a list of tasks that are not done """
-    for i in tasks:
-        if "done" == False:
-            _tasks.append(tasks[i])
     _tasks = []
+    for i in tasks:
+        if i["done"] == False:
+            _tasks.append(i)    
     list_tasks(_tasks)
     #sg342 8th feb 2023 
 
@@ -179,7 +181,7 @@ def get_time_remaining(index):
         print("Please give index no. starting from 1")
     else:
         task_left = tasks[index]
-        due_time = task_left.due
+        due_time = str_to_datetime(task_left["due"])
         time_now = datetime.now()
         if due_time>time_now:
             time_diff = due_time-time_now
