@@ -73,14 +73,14 @@ def process_update(index):
         print("please enter index no. starting from 1")
     else:
         task_to_update = tasks[index]
-        print("The task is",task_to_update["name"])
-        print("Description: ",task_to_update["description"])
-        print("Due date : ",task_to_update["due"])
-        name = input(f"What's the name of this task? \n").strip()
-        desc = input(f"What's a brief descriptions of this task? \n").strip()
-        due = input(f"When is this task due (format: m/d/y H:M:S) \n").strip()
+        t_name = task_to_update["name"]
+        t_due = task_to_update["due"]
+        t_desc = task_to_update["description"]
+        name = input(f"What's the name of this task? {t_name} \n").strip()
+        desc = input(f"What's a brief descriptions of this task? {t_desc}\n").strip()
+        due = input(f"When is this task due (format: m/d/y H:M:S) {t_due}\n").strip()
         update_task(index, name=name, description=desc, due=due)
-    #sg342 8th feb 2023
+    #sg342 8th feb 2023 getting task by index ; checking index out of bounds errors
 
 def update_task(index: int, name: str, description:str, due: str):
     """ Updates the name, description , due date of a task found by index if an update to the property was provided """
@@ -103,7 +103,7 @@ def update_task(index: int, name: str, description:str, due: str):
             print("Nothing was updated...")
         task_to_change["lastActivity"] = datetime.now() 
     tasks[index] = task_to_change 
-    #sg342 8th feb 2023
+    #sg342 8th feb 2023 finding the item by index then checking if previous value is equal to new value if not then replacing value
     
     save()
 
