@@ -166,10 +166,11 @@ def get_incomplete_tasks():
 
 def get_overdue_tasks():
     """ prints a list of tasks that are over due completion (not done and expired) """
-    for i in tasks:
-        if ("due">datetime.now()) and ("done"==False):
-            _tasks = tasks[i]
     _tasks = []
+    for i in tasks:
+        time_due = str_to_datetime(i["due"])
+        if time_due<datetime.now() and (i["done"]==False):
+            _tasks.append(i)
     list_tasks(_tasks)
     #sg342 8th feb 2023
 

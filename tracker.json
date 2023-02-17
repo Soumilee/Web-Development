@@ -2,15 +2,15 @@
     {
         "name": "study for midterm",
         "due": "03/02/23 01:10:30",
-        "lastActivity": "2023-02-16 14:47:54.716995",
+        "lastActivity": "2023-02-16 20:02:30.256340",
         "description": "finish midterm course",
-        "done": false
+        "done": "2023-02-16 20:02:30.256340"
     },
     {
-        "name": "sing in class",
-        "due": "04/02/23 09:00:00",
-        "lastActivity": "2023-02-16 14:58:38.122416",
-        "description": "singing in class for practice",
+        "name": "sing in park",
+        "due": "02/15/23 10:00:00",
+        "lastActivity": "2023-02-16 20:03:44.790410",
+        "description": "singing in park for birthday",
         "done": false
     },
     {
@@ -26,5 +26,12 @@
         "lastActivity": "2023-02-16 15:16:36.702399",
         "description": "oil painint potraits",
         "done": "2023-02-16 15:16:35.255379"
+    },
+    {
+        "name": "drink water",
+        "due": "2023-02-18 11:30:00",
+        "lastActivity": "2023-02-16 20:00:14.836972",
+        "description": "drink 4 ltrs of water every day",
+        "done": false
     }
 ]
