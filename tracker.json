@@ -1,37 +1,23 @@
 [
     {
-        "name": "sing in park",
-        "due": "02/15/23 10:00:00",
-        "lastActivity": "2023-02-16 20:03:44.790410",
-        "description": "singing in park for birthday",
-        "done": false
+        "name": "shopping",
+        "due": "2023-02-23 16:00:00",
+        "lastActivity": "2023-02-17 09:55:43.626437",
+        "description": "shop for groceries",
+        "done": "2023-02-17 09:55:43.626437"
     },
     {
-        "name": "writing",
-        "due": "04/02/23 10:30:00",
-        "lastActivity": "2023-02-16 14:09:58.146508",
-        "description": "writing the job",
-        "done": false
+        "name": "inventory check",
+        "due": "2023-02-20 10:00:00",
+        "lastActivity": "2023-02-17 12:20:58.574598",
+        "description": "check pantry for groceries fruits & vegetables make a list for shopping",
+        "done": "2023-02-17 12:20:58.574598"
     },
     {
-        "name": "painting",
-        "due": "02/20/23 10:00:00",
-        "lastActivity": "2023-02-16 15:16:36.702399",
-        "description": "oil painint potraits",
-        "done": "2023-02-16 15:16:35.255379"
-    },
-    {
-        "name": "drink water",
-        "due": "2023-02-18 11:30:00",
-        "lastActivity": "2023-02-16 20:00:14.836972",
-        "description": "drink 4 ltrs of water every day",
-        "done": false
-    },
-    {
-        "name": "cleaning",
-        "due": "2023-02-27 09:30:00",
-        "lastActivity": "2023-02-16 20:55:12.886580",
-        "description": "clean the kitchen and bathroom and mop floors",
+        "name": "laundry",
+        "due": "2023-02-15 12:30:00",
+        "lastActivity": "2023-02-17 13:19:00.851446",
+        "description": "wash clothes and dry them off fold and keep in wardrobe",
         "done": false
     }
 ]

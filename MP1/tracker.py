@@ -80,7 +80,8 @@ def process_update(index):
         desc = input(f"What's a brief descriptions of this task? {t_desc}\n").strip()
         due = input(f"When is this task due (format: m/d/y H:M:S) {t_due}\n").strip()
         update_task(index, name=name, description=desc, due=due)
-    #sg342 8th feb 2023 getting task by index ; checking index out of bounds errors
+    #sg342 8th feb 2023 getting task by index ; checking index out of bounds errors and then showing previous values and updating them
+
 
 def update_task(index: int, name: str, description:str, due: str):
     """ Updates the name, description , due date of a task found by index if an update to the property was provided """
@@ -90,13 +91,13 @@ def update_task(index: int, name: str, description:str, due: str):
         print("Please enter index no. starting from 1")
     else:
         task_to_change = tasks[index]
-        if task_to_change["name"] != name:
+        if name != "":
             task_to_change["name"] = name
             print("name of task was updated !!")
-        if task_to_change["description"] != description:
+        if description != "":
             task_to_change["description"] = description
             print("the description of task was updated !!")
-        if task_to_change["due"] != due:
+        if due != "":
             task_to_change["due"] = due
             print("the due date was updated..")
         else:
@@ -162,7 +163,7 @@ def get_incomplete_tasks():
         if i["done"] == False:
             _tasks.append(i)    
     list_tasks(_tasks)
-    #sg342 8th feb 2023 
+    #sg342 8th feb 2023 checking if task is marked with done value of a date time if not then adding it to list and printing
 
 def get_overdue_tasks():
     """ prints a list of tasks that are over due completion (not done and expired) """
@@ -171,27 +172,34 @@ def get_overdue_tasks():
         time_due = str_to_datetime(i["due"])
         if time_due<datetime.now() and (i["done"]==False):
             _tasks.append(i)
-    list_tasks(_tasks)
-    #sg342 8th feb 2023
+    if len(_tasks)==0:
+        print("no overdue tasks to show..")
+    else:
+        list_tasks(_tasks)
+    #sg342 8th feb 2023 checking if due date is less than current time then assigning it to a list and printing if list has items
+    # and is not empty
 
 def get_time_remaining(index):
-    """ outputs the number of days, hours, minutes, seconds a task has before it's overdue otherwise shows similar info for how far past due it is """
+    """ outputs the number of days, hours, minutes, seconds a task has before it's overdue 
+    otherwise shows similar info for how far past due it is """
     if index>len(tasks):
         print("The index cannot be greater than the no of items in list")
     elif index<0:
         print("Please give index no. starting from 1")
     else:
         task_left = tasks[index]
-        due_time = str_to_datetime(task_left["due"])
+        due_time = task_left["due"]
+        due_time = str_to_datetime(due_time)
         time_now = datetime.now()
         if due_time>time_now:
-            time_diff = due_time-time_now
+            time_diff = due_time - time_now
             print("time remaining to finish the task is %d/%m/%Y %H:%M:%S  ",time_diff)
         else:
             time_diff = time_now - due_time
             print("the task is over due by %d/%m/%Y %H:%M:%S ",time_diff)
     task = {}
-    #sg342 8th feb 2023
+    #sg342 8th feb 2023 calculating the difference between due time and current time
+
 
 # no changes needed below this line
 
