@@ -2,17 +2,23 @@ from MyCalc import MyCalc
 import pytest
 
 calc = MyCalc()
-def test_add():    
+def test_add(): 
+    #sg342 26th feb 2023 checking num add num test case   
     assert calc.calc("2","2","+") == 4
 def test_sub():
+    #sg342 26th feb 2023 checking num sub num test case
     assert calc.calc("5","2","-") == 3
 def test_mul():
+    #sg342 26th feb 2023 checking num mul num test case
     assert calc.calc("2","3","*") == 6
 def test_div():
+    #sg342 26th feb 2023 checking num div num test case
     assert calc.calc("10","2","/") == 5
 def test_div_zero():
+    #sg342 26th feb 2023 checking zero error test case
     assert(ZeroDivisionError,calc.calc,10,0)
 def test_ans_add_num():
+    #sg342 26th feb 2023 checking ans add num test case
     data = [{
             "a":"ans",
             "b":"2",
@@ -27,6 +33,7 @@ def test_ans_add_num():
     for d in data:
         assert calc.calc(d["a"],d["b"],"+") == int(d["ans"])
 def test_ans_sub_num():
+     #sg342 26th feb 2023 checking ans sub num test case
     data = [
         {
             "a":"ans",
@@ -43,6 +50,7 @@ def test_ans_sub_num():
     for d in data:
         assert calc.calc(d["a"],d["b"],"-") == int(d["ans"])
 def test_ans_mul_num():
+     #sg342 26th feb 2023 checking ans mul num test case
     data = [
         {
             "a":"ans",
@@ -58,7 +66,8 @@ def test_ans_mul_num():
     calc.ans = 2
     for d in data:
         assert calc.calc(d["a"],d["b"],"*") == int(d["ans"])
-def test_ans_dev_num():
+def test_ans_div_num():
+     #sg342 26th feb 2023 checking ans div num test case
     data = [
         {
             "a":"ans",

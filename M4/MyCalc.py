@@ -1,4 +1,3 @@
-import math
 class MyCalc:
     ans = 0
     @staticmethod
@@ -23,7 +22,10 @@ class MyCalc:
             return float(val)
         else:
             raise Exception("Not a number")
-    def calc(self, num1, num2, operator):
+    def calc(self, num1, num2, operator): #ucid sg342 this is the main part of the code
+        #for addition subtraction division and multiplication calc function will perform the
+        #operation in case of division it will check whether the divisor is 0 and prompt user
+        #to change the divisor to prevent error date 26th feb 2023 
         if num1 == "ans":
             return self.calc(self.ans, num2, operator)
         num1 = MyCalc._as_number(num1)
@@ -56,7 +58,7 @@ if __name__ == '__main__':
                     if op in iSTR:
                         nums = iSTR.split(op)
                         r = calc.calc(nums[0].strip(), nums[1].strip(), op)
-                        r1 = round(r,2)
+                        r1 = round(r,2) #rounding it upto 2 decimal point to prevent error
                         print("Result for your equation is " + str(r1))
     else:
         print("Good bye")
