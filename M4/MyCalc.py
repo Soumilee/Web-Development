@@ -1,4 +1,4 @@
-
+import math
 class MyCalc:
     ans = 0
     @staticmethod
@@ -28,14 +28,16 @@ class MyCalc:
             return self.calc(self.ans, num2, operator)
         num1 = MyCalc._as_number(num1)
         num2 = MyCalc._as_number(num2)
-        if operator == "+":
+        if num2 == 0 and operator =="/":
+            print ("This will cause zero error division please change the value")
+        elif operator == "+":
             self.ans = num1+num2
         elif operator == "-":
             self.ans = num1-num2
         elif operator == "*":
             self.ans = num1*num2
         elif operator == "/":
-            self.ans = num1/num2
+                self.ans = num1/num2
         return self.ans
 if __name__ == '__main__':
     is_running = True
@@ -54,7 +56,8 @@ if __name__ == '__main__':
                     if op in iSTR:
                         nums = iSTR.split(op)
                         r = calc.calc(nums[0].strip(), nums[1].strip(), op)
-                        print("R is " + str(r))
+                        r1 = round(r,2)
+                        print("Result for your equation is " + str(r1))
     else:
         print("Good bye")
         is_running = False
