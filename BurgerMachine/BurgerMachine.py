@@ -145,7 +145,7 @@ class BurgerMachine:
             print("Thank you! Enjoy your burger!")
             self.total_burgers += 1
             self.total_sales += expected # only if successful
-            #print(f"Total sales so far {self.total_sales}")
+            print(f"Total sales so far {self.total_sales}")
             self.reset()
         else:
             raise InvalidPaymentException
@@ -153,9 +153,10 @@ class BurgerMachine:
     def print_current_burger(self):
         print(f"Current Burger: {','.join([x.name for x in self.inprogress_burger])}")
 
-    def calculate_cost(self):
-        # TODO add the calculation expression/logic for the inprogress_burger
-        return 10000
+    def calculate_cost(self): #ucid - sg342 date - 7th March 2023
+        for i in self.inprogress_burger:
+            total_cost_of_burger = + i["cost"]
+        return total_cost_of_burger
 
     def run(self):
         try:
@@ -174,6 +175,7 @@ class BurgerMachine:
             elif self.currently_selecting == STAGE.Pay:
                 expected = self.calculate_cost()
                 # show expected value as currency format
+                print(f"The expected value is {expected} $")
                 # require total to be entered as currency format
                 total = input(f"Your total is {expected}, please enter the exact value.\n")
                 self.handle_pay(expected, total)
@@ -188,19 +190,44 @@ class BurgerMachine:
             # quit
             print("Quitting the burger machine")
             sys.exit()
-        # handle OutOfStockException
+        except OutOfStockException: #ucid - sg342 edited on - 12th March 2023
+            print("Ingredients out of Stock")
             # show an appropriate message of what stage/category was out of stock
-        # handle NeedsCleaningException
+        except NeedsCleaningException:  #ucid - sg342 edited on - 12th March 2023
             # prompt user to type "clean" to trigger clean_machine()
-            # any other input is ignored
-            # print a message whether or not the machine was cleaned
-        # handle InvalidChoiceException
+            choice = input("Please enter clean to clean the Burger Machine")
+            if choice != "clean":
+                print("The machine is not clean Please enter clean")
+                choice = input("No other input accepted") # any other input is ignored
+            else:
+                self.clean_machine()
+                print("The machine was cleaned") # print a message whether or not the machine was cleaned 
+        except InvalidChoiceException: #ucid - sg342 edited on - 12th March 2023
+            if self.currently_selecting==STAGE.Bun:
+                print("Invalid choice made while selecting bun")
+            elif self.currently_selecting==STAGE.Patty:
+                print("Invalid choice made while selecting patty")
+            elif self.currently_selecting==STAGE.Toppings:
+                print("Invalid choice made while selecting toppings")
+            else:
+                print("Invalid choice made while paying")
             # show an appropriate message of what stage/category was the invalid choice was in
-        # handle ExceededRemainingChoicesException
+        except ExceededRemainingChoicesException: #ucid - sg342 edited on - 12th March 2023
+            if self.currently_selecting==STAGE.Bun:
+                print("Exceeded the choices for bun")
+                self.currently_selecting = STAGE.Patty
+            elif self.currently_selecting==STAGE.Patty:
+                print("Exceeded the remaining choices for patty")
+                self.currently_selecting = STAGE.Toppings
+            elif self.currently_selecting==STAGE.Toppings:
+                print("Exceeded the remaining choices for toppings")
+                self.currently_selecting = STAGE.Pay
+            else:
+                print("Exceeded the remaining choices for payment please start again")
             # show an appropriate message of which stage/category was exceeded
             # move to the next stage/category
-        # handle InvalidPaymentException
-            # show an appropriate message
+        except InvalidPaymentException: #ucid - sg342 edited on - 12th March 2023
+            print("Please enter the exact amount of money")
         except:
             # this is a default catch all, follow the steps above
             print("Something went wrong")
