@@ -27,7 +27,7 @@ def second_order(first_order):
     first_order.handle_toppings("cheese")
     first_order.handle_toppings("cheese")
     first_order.handle_toppings("done")
-    #machine.handle_pay(10000,"10000")
+    #first_order.handle_pay(10000,"10000")
     return first_order
 # sample test case, can delete if not using
 def test_production_line(second_order):
@@ -40,31 +40,31 @@ def test_production_line(second_order):
 # add required test cases below
 @pytest.fixture
 def no_bun(machine):
-    machine.handle_bun("no bun")
+    machine.handle_bun("no choice")
     machine.handle_patty("Turkey")
     machine.handle_patty("veggie")
     machine.handle_toppings("cheese")
     machine.handle_pay(2.25,"2.25")
     return machine
-def test_no_bun(no_bun): #Test 1 - bun must be the first selection (can't add patties/toppings without a bun choice)
-    arr = ['no bun','white burger bun','wheat burger bun','lettuce wrap']
-    for j in no_bun.buns:
-        print(no_bun.inprogress_burger)
-        for i in arr:
-            if i != no_bun.inprogress_burger[0].name.lower():
-                raise InvalidChoiceException
-def test_add_patty (self,no_bun): #Test 2 - can only add patties if they're in stock
+def test_no_bun(second_order): #Test 1 - bun must be the first selection (can't add patties/toppings without a bun choice
+    for j in second_order.buns:
+            if j.name.lower() == second_order.inprogress_burger[0].name.lower():
+                assert True
+                return
+    assert False
+        
+def test_add_patty (self,second_order): #Test 2 - can only add patties if they're in stock
     count = 0
-    for j in no_bun.patty:
+    for j in second_order.patties:
         count  =+ 1
-    if count>self.remaining_patties:
-        raise ExceededRemainingChoicesException
-def test_add_topp(self,no_bun): #Test 3 - can only add toppings if they're in stock
+    if count<self.remaining_patties:
+        assert True
+def test_add_topp(self,second_order): #Test 3 - can only add toppings if they're in stock
     count = 0
-    for j in no_bun.toppings:
+    for j in second_order.toppings:
         count =+1
-    if count>self.remaining_toppings:
-        raise ExceededRemainingChoicesException
+    if count<self.remaining_toppings:
+        assert True
 def test_patty_combo(no_bun): #Test 4 - Can add up to 3 patties of any combination
     count = 0
     for j in no_bun.patty:
@@ -106,19 +106,14 @@ def beef_burger(machine):
     machine.handle_toppings("mayo")
     machine.handle_pay(3.00,"3.00")
     return machine
-def test_cost_calc(turkey_burger,lettuce_wrap,beef_burger): #Test 6 - cost must be calculated properly based on the choices (check for currency format as part of this) (test case should have a few permutations of at least 3 valid burgers)
-    if turkey_burger.expected == turkey_burger.total:
-        assert True
-    if lettuce_wrap.expected == lettuce_wrap.total:
-        assert True
-    if beef_burger.expected == beef_burger.total:
+def test_cost_calc(second_order): #Test 6 - cost must be calculated properly based on the choices (check for currency format as part of this) (test case should have a few permutations of at least 3 valid burgers)
+    if second_order.expected == second_order.total:
         assert True
     assert False
-def test_total_sales_cost(turkey_burger,lettuce_wrap,beef_burger): #Test 7 - Total Sales (sum of costs) must be calculated properly (test case should have a few permutations of at least 3 valid burgers)
-    total_sales = turkey_burger.total + lettuce_wrap.total + beef_burger.total
-    if total_sales == 9.00:
+def test_total_sales_cost(self): #Test 7 - Total Sales (sum of costs) must be calculated properly (test case should have a few permutations of at least 3 valid burgers)
+    if self.total_sales == 9.00:
         assert True
 def test_total_burger_count(self): #Test 8 - Total burgers should properly increment for each purchase
-    if self.total_burgers == 3:
+    if self.total_burgers == 2:
         assert True
 

@@ -144,7 +144,7 @@ class BurgerMachine:
         if total == str(expected):
             print("Thank you! Enjoy your burger!")
             self.total_burgers += 1
-            self.total_sales += expected # only if successful
+            self.total_sales += float(expected) # only if successful
             print(f"Total sales so far {self.total_sales}")
             self.reset()
         else:
@@ -154,8 +154,9 @@ class BurgerMachine:
         print(f"Current Burger: {','.join([x.name for x in self.inprogress_burger])}")
 
     def calculate_cost(self): #ucid - sg342 date - 7th March 2023
+        total_cost_of_burger = 0
         for i in self.inprogress_burger:
-            total_cost_of_burger = + i["cost"]
+            total_cost_of_burger += i.cost
         return total_cost_of_burger
 
     def run(self):
@@ -175,11 +176,11 @@ class BurgerMachine:
             elif self.currently_selecting == STAGE.Pay:
                 expected = self.calculate_cost()
                 # show expected value as currency format
-                print(f"The expected value is {expected} $")
+                currency_value = "{:,.2f}".format(expected)
+                print(f"The expected value is ${currency_value}")
                 # require total to be entered as currency format
-                total = input(f"Your total is {expected}, please enter the exact value.\n")
-                self.handle_pay(expected, total)
-                
+                total = input(f"Your total is {currency_value} please enter the exact value.\n")
+                self.handle_pay(currency_value, total)                
                 choice = input("What would you like to do? (order or quit)\n")
                 if choice == "quit":
                     #exit() in recursive functions creates stackoverflow
