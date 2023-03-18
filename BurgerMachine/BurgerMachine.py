@@ -175,7 +175,7 @@ class BurgerMachine:
                 self.print_current_burger()
             elif self.currently_selecting == STAGE.Pay:
                 expected = self.calculate_cost()
-                # show expected value as currency format
+                # show expected value as currency format ucid - sg342 date - 14th march 2023
                 currency_value = "{:,.2f}".format(expected)
                 print(f"The expected value is ${currency_value}")
                 # require total to be entered as currency format
