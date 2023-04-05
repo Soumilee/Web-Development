@@ -107,8 +107,7 @@ def add(): #ucid - sg342 date - 04/03/2023
             try:
                 result = DB.insertOne("""
                 INSERT INTO IS601_MP3_Companies (name, address, city, country, state, zip, website)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-                """,name,address,city,country,state,zip,website) # <-- TODO add-8 add query and add arguments
+                VALUES (%s, %s, %s, %s, %s, %s, %s)""",name,address,city,country,state,zip,website) # <-- TODO add-8 add query and add arguments
                 if result.status:
                     flash("Added Company", "success")
             except Exception as e:
