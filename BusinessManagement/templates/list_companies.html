@@ -5,14 +5,22 @@
 {% from "sort_filter.html" import sort_filter %}
 <div class="container-fluid">
     <div class="h1 text-center">Company Directory</div>
-    {# TODO
-    build a horizontal filter/sort form with
-    name (show as company name but name field should be name)
-    country/state (provided)
-    sort/order (using allowed_columns and provided partial template)
-    limit (default 10)
-    ensure all fields prefill with request arg data if provided
-    #}
+    {# TODO build a horizontal filter/sort form with name (show as company name but name field should be name)
+    country/state (provided) sort/order (using allowed_columns and provided partial template) limit (default 10)
+    ensure all fields prefill with request arg data if provided #}
+    <div class="col-12">
+        <label class="form-label" for="order">Order</label>
+        <select class="form-select" id="order" name="order" value="{{request.args.get('order')}}">
+            <option value="">Choose...</option>
+            <option {{'selected' if request.args.get('order')=="asc" }} value="asc">+</option>
+            <option {{'selected' if request.args.get('order')=="desc" }} value="desc">-</option>
+        </select>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="limit">Limit</label>
+        <input class="form-control" type="number" min="1" max="100" id="limit" name="limit"
+            value="{{request.args.get('limit') or '10'}}" />
+    </div>
     <form method="GET">
         <div class="row">
             {{country_state_selector(layout="horizontal")}}
@@ -32,21 +40,34 @@
                 <tr class="text-capitalize">
                     {# generate th tags for each column to display #}
                     {# IMPORTANT use table column names as the headings, replace _ with space via filter #}
-
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td>
+                        <label for="fn">Company Name</label>
+                    </td>
+                    <td><input type="text" id ="cn"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="ln">Website</label>
+                    </td>
+                    <td><input type="text" id ="web"/></td>
+                </tr>
+                <tr>
+                    <td>
+                        <label for="count">Company Id</label>
+                    </td>
+                    <td><input type="text" id ="cid"/></td>
+                </tr>
                 {# generate tr with td tags for each piece of data #}
                 {# if the td is for website, display it as a link where the text is "website" and the url is the
-                website url #}
-                {# in the last column add the following
-                a view button that passes the company id to employee search (this will be a company employee
-                directory) also pass company_name as an argument
-                an edit button that passes the company id to company edit
-                a delete button that passes the company id and the request args to the company delete route
-                #}
-
+                website url #}{# in the last column add the following a view button that passes the company id to employee search 
+                (this will be a company employee directory) also pass company_name as an argument an edit button that passes 
+                the company id to company edit a delete button that passes the company id and the request args to the company 
+                delete route #}
             </tbody>
             {% else %}
             <tbody>
