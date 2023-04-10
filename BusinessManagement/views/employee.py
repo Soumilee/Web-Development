@@ -73,6 +73,7 @@ def add():
         last_name = request.args.get("last_name")
         company_id = request.args.get("company_id")
         email = request.args.get("email")
+        resp = None
         # TODO add-2 first_name is required (flash proper error message)
         if first_name == " ":
             flash(" The first name of employee is rquired ","error")
@@ -80,15 +81,16 @@ def add():
         if last_name == " ":
             flash(" The last name of employee is rquired ","error")
         # TODO add-4 company (may be None)
-        if company_id == None:
+        if company_id == " ":
             flash(" The company id maybe empty ","info")
         # TODO add-5 email is required (flash proper error message)
         if email == " ":
-            flash(" The first name of employee is rquired ","error")
+            flash(" The email is required ","error")
         # TODO add-5a verify email is in the correct format
-        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-        if(re.fullmatch(regex,email)):
-            print("The email is valid")
+        else:
+            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+            if(re.fullmatch(regex,email)):
+                print("The email is valid")
         has_error = False # use this to control whether or not an insert occurs            
         if not has_error:
             try:
@@ -100,7 +102,8 @@ def add():
             except Exception as e:
                 # TODO add-7 make message user friendly
                 flash(f'The insertion could not be completed du to thid error {str(e)}', "danger")
-    return render_template("add_employee.html")
+                resp = e
+    return render_template("add_employee.html", resp=resp)
 
 @employee.route("/edit", methods=["GET", "POST"])
 def edit():

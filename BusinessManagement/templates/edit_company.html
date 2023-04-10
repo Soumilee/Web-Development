@@ -7,22 +7,34 @@
     <div class="h1">Edit Company</div>
     <div>
         <form method="POST">
-            {#
-            generate fields with proper types for
-            name (required)
-            address (required)
-            city (required)
-            state/country (use the country_state_selector)
-            zip (required)
-            website (not required)
-            and prefill the fields with loaded company data
-            #}
-
-            {# use this for country/state selection #}
-            {{country_state_selector(country=company.country, state=company.state)}}
-
+            <div class="form-group mp-3">
+                <label class="form-label" for="n">Name</label>
+                <input class="form-control" id="n" name="Name" readonly value="{{row.name}}"/>
+            </div>
+            <div class="form-group mp-3">
+                <label class="form-label" for="a">Address</label>
+                <input class="form-control" id="a" name="Address" readonly value="{{row.address}}"/>
+            </div>
+            <div class="form-group mp-3">
+                <label class="form-label" for="c">City</label>
+                <input class="form-control" id="c" name="City" readonly value="{{row.city}}"/>
+            </div>
+            <div class="form-group mp-3">
+                <label class="form-label" for="z">zip</label>
+                <input class="form-control" id="z" name="zip" readonly value="{{row.zip}}"/>
+            </div>
+            <div class="form-group mp-3">
+                <label class="form-label" for="w">Website</label>
+                <input class="form-control" id="w" name="Website" readonly value="{{row.website}}"/>
+            </div>
+            {{country_state_selector(country=company.country, state=company.state)}}"/>   
             <input type="submit" class="btn btn-primary" value="Save Company" />
         </form>
+        {% if resp %}
+        <div id="output">
+            {{resp}}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

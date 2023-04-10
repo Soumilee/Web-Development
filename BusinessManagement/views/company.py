@@ -17,21 +17,21 @@ def search(): #ucid - sg342 04/03/2023
     query = """SELECT c.id, c.name, c.address, c.city, c.country, c.state, c.zip, c.website, 
     (SELECT count(1) FROM IS601_MP3_Employees e where e.companies_id = IS601_MP3_Companies.id) 
     from IS601_MP3_Companies c, IS601_MP3_Employees e WHERE 1=1 """
-    args = {} # <--- add values to replace %s/%(named)s placeholders
+    args = {"name":" ","country":" ","state":" ","col":" ","order":" ","limit":" "} # <--- add values to replace %s/%(named)s placeholders
     allowed_columns = ["name", "city", "country", "state"]
     # TODO search-2 get name, country, state, column, order, limit request args
     # TODO search-3 append a LIKE filter for name if provided
     if name:
         query += "AND name like %s"
-        args.append(f"%{name}%")
+        rows.append(f"%{name}%")
     # TODO search-4 append an equality filter for country if provided
     if country:
         query += "AND country == %s"
-        args.append(f'%{country}%')
+        rows.append(f'%{country}%')
     # TODO search-5 append an equality filter for state if provided
     if state:
         query += "AND state == %s"
-        args.append(f'%{state}%')
+        rows.append(f'%{state}%')
     # TODO search-6 append sorting if column and order are provided and within the allows columsn and allowed order asc,desc
     if col in ["name","city","country","state"] \
         and order in ["asc", "desc"]:
@@ -39,7 +39,7 @@ def search(): #ucid - sg342 04/03/2023
     # TODO search-7 append limit (default 10) or limit greater than 1 and less than or equal to 100
     if limit and int(limit) > 0 and int(limit) <= 100:
         query += " LIMIT %s"
-        args.append(int(limit))
+        rows.append(int(limit))
     else:
         print("the limit is out of bounds ")
     # TODO search-8 provide a proper error message if limit isn't a number or if it's out of bounds  
@@ -56,10 +56,11 @@ def search(): #ucid - sg342 04/03/2023
     except Exception as e:
         # TODO search-9 make message user friendly
         flash(f"The error while fetching query results is {str(e)}", "danger")
+        error = e
     # hint: use allowed_columns in template to generate sort dropdown
     # hint2: convert allowed_columns into a list of tuples representing (value, label)
     # do this prior to passing to render_template, but not before otherwise it can break validation    
-    return render_template("list_companies.html", rows=rows, allowed_columns=allowed_columns)
+    return render_template("list_companies.html", result=rows, error = error)
 
 @company.route("/add", methods=["GET","POST"])
 def add(): #ucid - sg342 date - 04/03/2023
@@ -72,6 +73,7 @@ def add(): #ucid - sg342 date - 04/03/2023
         country = request.args.get("country")
         zip = request.args.get("zip")
         website = request.args.get("website")
+        resp = None
         # TODO add-2 name is required (flash proper error message)
         if name == " ":
             flash('name must be present ','error')
@@ -82,17 +84,18 @@ def add(): #ucid - sg342 date - 04/03/2023
         if city == " ":
             flash('city is required','error')
         # TODO add-5 state is required (flash proper error message)
-        for i in pycountry.subdivisions:
-            if country == i:
-                abcd = pycountry.subdivisions.get(country_name=i)
-                break
-        countr_code = abcd.code
-        if state ==" "or state != pycountry.subdivisions.get(countr_code=countr_code):
-            flash('The state must be a valid state in the country ','error')
+        if state ==" ":
+            flash('Please enter a state ','error')
+        country_code = request.args.get("country_code", default="", type=str)
+        states = []
+        if country_code.strip():
+            states = pycountry.subdivisions.get(country_code=country_code.strip())
+        if state not in states:
+            flash("Select a state within the country")
         # TODO add-5a state should be a valid state mentioned in pycountry for the selected state
         # hint see geography.py and pycountry documentation
         if country ==" "or country!=list(pycountry.countries):
-            flash('Please entry country name','error')     
+            flash('Please enter country name','error')     
         # TODO add-6 country is required (flash proper error message) country should be a valid country mentioned in pycountry
         # hint see geography.py and pycountry documentation
         # TODO add-7 website is not required
@@ -110,16 +113,19 @@ def add(): #ucid - sg342 date - 04/03/2023
                 VALUES (%s, %s, %s, %s, %s, %s, %s)""",name,address,city,country,state,zip,website) # <-- TODO add-8 add query and add arguments
                 if result.status:
                     flash("Added Company", "success")
+                    resp = "Saved record"
             except Exception as e:
                 # TODO add-9 make message user friendly
                 flash(f'The company was not added to the Table Sorry!!! Try again {str(e)}', "danger")
+                resp = e
         
-    return render_template("add_company.html")
+    return render_template("add_company.html",resp = resp)
 
 @company.route("/edit", methods=["GET", "POST"])
 def edit(): # ucid - sg342 date - 04/03/2023
     # TODO edit-1 request args id is required (flash proper error message)
     id = request.args.get("id")
+    resp = None
     if not id: # TODO update this for TODO edit-1
         flash('ID is required !!!','error')
     else:
@@ -144,19 +150,20 @@ def edit(): # ucid - sg342 date - 04/03/2023
                 flash('city is required for updating','error')
             # TODO edit-5 state is required (flash proper error message)
             # TODO edit-5a state should be a valid state mentioned in pycountry for the selected state
-            # hint see geography.py and pycountry documentation
-            for i in pycountry.subdivisions:
-                if country == i:
-                    abcd = pycountry.subdivisions.get(country_name=i)
-                    break
-            countr_code = abcd.code
-            if state ==" "or state != pycountry.subdivisions.get(countr_code=countr_code):
-                flash('The state must be a valid state in the country ','error')
+            # hint see geography.py and pycountry documentation            
+            if state ==" ":
+                flash('Please enter a state ','error')
+            country_code = request.args.get("country_code", default="", type=str)
+            states = []
+            if country_code.strip():
+                states = pycountry.subdivisions.get(country_code=country_code.strip())
+            if state not in states:
+                flash("Select a state within the country")
             # TODO edit-6 country is required (flash proper error message)
             # TODO edit-6a country should be a valid country mentioned in pycountry
             # hint see geography.py and pycountry documentation
             if country ==" "or country!=list(pycountry.countries):
-                flash('Please enter country name for updating','error')     
+                flash('Please enter a valid country name for updating','error')     
             # TODO edit-7 website is not required
             if website == " ":
                 flash('website is not required for updating','info')
@@ -171,7 +178,7 @@ def edit(): # ucid - sg342 date - 04/03/2023
                     # TODO edit-9 fill in proper update query
                     # name, address, city, state, country, zip, website
                     result = DB.update("""UPDATE IS601_MP3_Companies SET name = %s, address = %s, city = %s,
-                    state = %s, country = %s, zip = %s, website = %s WHERE id = %s""", name,address,city,state,country,zip,website,data)
+                    state = %s, country = %s, zip = %s, website = %s WHERE id = %s""", name,address,city,state,country,zip,website,id)
                     if result.status:
                         print("updated record")
                         flash("Updated record", "success")
@@ -179,6 +186,7 @@ def edit(): # ucid - sg342 date - 04/03/2023
                     # TODO edit-10 make this user-friendly
                     print(f"{e}")
                     flash(f'The company information was not updated due to this error {str(e)}', "danger")
+                    resp = e
         row = {}
         try:
             # TODO edit-11 fetch the updated data
@@ -188,8 +196,9 @@ def edit(): # ucid - sg342 date - 04/03/2023
         except Exception as e:
             # TODO edit-12 make this user-friendly
             flash(f'Please address this issue so we can proceed with the information update {str(e)}', "danger")
+            resp = e
     # TODO edit-13 pass the company data to the render template
-    return render_template("edit_company.html", row=row)
+    return render_template("edit_company.html", row=row, resp=resp)
 
 @company.route("/delete", methods=["GET"])
 def delete(): #ucid - sg342 date - 04/03/2023

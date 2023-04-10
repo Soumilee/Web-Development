@@ -18,7 +18,7 @@ def importCSV():
             flash('No selected file', "warning")
             return redirect(request.url)
         # TODO importcsv-1 check that it's a .csv file, return a proper flash message if it's not
-        if file.endswith('.csv'): #ucid - sg342 date 04/02/2023
+        if file.filename.endswith('.csv'): #ucid - sg342 date 04/02/2023
             pass
         else:
             flash('The file is not in csv format','error')
@@ -54,9 +54,13 @@ def importCSV():
             # TODO importcsv-3 extract company data and append to company list as a dict only with company data if all is present                
             # TODO importcsv-4 extract employee data and append to employee list as a dict only with employee data if all is present  
                 if row["company_name"] and row["address"] and row["city"] and row["state"] and row["zip"] and row["web"]:
-                    companies.append(row["company_name"])
+                    company_data ={"name": row["company_name"],"address": row["address"],"city":
+                        row["city"],"country":row["country"], "state": row["state"],"zip": row["zip"],"website": row["web"]}
+                    companies.append(company_data)
                 if row["first_name"] and row["last_name"] and row["email"] and row["company_name"]:
-                    employees.append(row["first_name"] + row["last_name"])        
+                    employee_data ={"first_name":row["first_name"],"last_name":row["last_name"],"email":row["email"],
+                                    "company_name":row["company_name"]}
+                    employees.append(employee_data)     
             if len(companies) > 0:
                 print(f"Inserting or updating {len(companies)} companies")
                 try:

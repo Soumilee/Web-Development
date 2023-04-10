@@ -7,21 +7,34 @@
     <div class="h1">Add Company</div>
     <div>
         <form method="POST">
-            {#
-            using regular html generate fields (labels and input) with proper types for
-            name (required)
-            address (required)
-            city (required) (can be a text field, doesn't need to be a valid city)
-            state/country (required) (given)
-            zip (required)
-            website (optional)
-            if a validation error occurs, the inserted form data should persist
-            #}
-
-            {# use this for country/state selection #}
+            <div class="form-group mb-3">
+                <label class="form-label" for="cn">Company Name</label>
+                <input class="form-control" id="cn" name="Company Name" type="text" required />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="a">Address</label>
+                <input class="form-control" id="a" name="Address" type="text" required/>
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="c">City</label>
+                <input class="form-control" id="c" name="City" type="text" required/>
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="z">Zip</label>
+                <input class="form-control" id="z" name="Zip" type="text" required/>
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="web">Website</label>
+                <input class="form-control" id="web" name="Website" type="text" />
+            </div>
             {{country_state_selector()}}
             <input type="submit" class="btn btn-primary" value="Save Company" />
         </form>
+        {% if resp %}
+        <div id="output">
+            {{resp}}
+        </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
