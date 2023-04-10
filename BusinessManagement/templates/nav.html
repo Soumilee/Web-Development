@@ -11,7 +11,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <!-- company dropdown nav -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" href="{{url_for('company.edit')}}" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Company
                     </a>
@@ -22,7 +22,7 @@
                 </li>
                 <!-- employee dropdown nav -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" href="{{url_for('employee.edit')}}" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Employee
                     </a>
@@ -33,12 +33,12 @@
                 </li>
                 <!-- admin dropdown nav -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                    <a class="nav-link dropdown-toggle" href="{{url_for('admin.importCSV')}}" role="button" data-bs-toggle="dropdown"
                         aria-expanded="false">
                         Admin
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Import</a></li>
+                        <li><a class="dropdown-item" href="{{url_for('admin.importCSV')}}">Import</a></li>
                     </ul>
                 </li>
             </ul>

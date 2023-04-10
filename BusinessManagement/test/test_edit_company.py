@@ -45,7 +45,7 @@ def test_edit_company(client):
     }, follow_redirects=True )
     assert resp.status_code == 200
     resp = client.get("/company/edit?id=-1", follow_redirects=True )
-    # print(resp.data)
+    #print(resp.data)
     from bs4 import BeautifulSoup
     soup = BeautifulSoup(resp.data, "html.parser")
     form = soup.form

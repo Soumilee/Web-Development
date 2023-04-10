@@ -60,34 +60,37 @@ def search():
     except Exception as e:
         # TODO search-10 make message user friendly
         flash(e, "error")
+        error = e
     # hint: use allowed_columns in template to generate sort dropdown
     # hint2: convert allowed_columns into a list of tuples representing (value, label)
     # do this prior to passing to render_template, but not before otherwise it can break validation   
-    return render_template("list_employees.html", rows=rows, allowed_columns=allowed_columns)
+    return render_template("list_employees.html", result=rows, error=e)
 
 @employee.route("/add", methods=["GET","POST"])
 def add():
     if request.method == "POST":
         # TODO add-1 retrieve form data for first_name, last_name, company, email
-        first_name = request.args.get("first_name")
-        last_name = request.args.get("last_name")
-        company_id = request.args.get("company_id")
-        email = request.args.get("email")
+        first_name = request.args.get("first_name",None)
+        last_name = request.args.get("last_name",None)
+        company_id = request.args.get("company_id",None)
+        email = request.args.get("email",None)
+        #print("----",request.args)
+        #print("The values that are received is : ",first_name, last_name, email, company_id )
         resp = None
         # TODO add-2 first_name is required (flash proper error message)
-        if first_name == " ":
+        if first_name == " "or None:
             flash(" The first name of employee is rquired ","error")
         # TODO add-3 last_name is required (flash proper error message)
-        if last_name == " ":
+        if last_name == " " or None:
             flash(" The last name of employee is rquired ","error")
         # TODO add-4 company (may be None)
-        if company_id == " ":
+        if company_id == " " or None:
             flash(" The company id maybe empty ","info")
         # TODO add-5 email is required (flash proper error message)
-        if email == " ":
+        if email == " " or None:
             flash(" The email is required ","error")
         # TODO add-5a verify email is in the correct format
-        else:
+        if email != None:
             regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
             if(re.fullmatch(regex,email)):
                 print("The email is valid")
@@ -108,7 +111,7 @@ def add():
 @employee.route("/edit", methods=["GET", "POST"])
 def edit():
     # TODO edit-1 request args id is required (flash proper error message)
-    id = request.args.get(id)
+    id = request.args.get("id")
     if not id: # TODO update this for TODO edit-1
         flash("Id is required for editing !!! ","error")
     else:
@@ -119,21 +122,22 @@ def edit():
             company_id = request.args.get("company_id")
             email = request.args.get("email")
             # TODO edit-2 first_name is required (flash proper error message)
-            if first_name == " ":
+            if first_name == " " or None:
                 flash("Warning First name of employee required !!","error")
             # TODO edit-3 last_name is required (flash proper error message)
-            if last_name == " ":
+            if last_name == " " or None:
                 flash(" The last name of employee is rquired ","error")
             # TODO edit-4 company (may be None)
             if company_id == None:
                 flash(" The company id maybe empty ","info")
             # TODO edit-5 email is required (flash proper error message)
-            if email == " ":
+            if email == " " or None:
                 flash(" The first name of employee is rquired ","error")
             # TODO edit-5a verify email is in the correct format
-            regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-            if(re.fullmatch(regex,email)):
-                print("The email is valid")
+            if email != None:
+                regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+                if(re.fullmatch(regex,email)):
+                    print("The email is valid")
             has_error = False # use this to control whether or not an insert occurs
             if not has_error:
                 try:

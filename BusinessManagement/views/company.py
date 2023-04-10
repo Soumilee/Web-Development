@@ -134,24 +134,25 @@ def edit(): # ucid - sg342 date - 04/03/2023
             # TODO edit-1 retrieve form data for name, address, city, state, country, zip, website
             name = request.args.get("name")
             address = request.args.get("address")
-            city = request.args.get("city")
-            state = request.args.get("state")
             country = request.args.get("country")
+            state = request.args.get("state")
+            city = request.args.get("city")
             zip = request.args.get("zip")
             website = request.args.get("website")
+            print(request.args)
             # TODO edit-2 name is required (flash proper error message)
-            if name == " ":
+            if name == " " or None:
                 flash('name must be present for updating','error')
             # TODO edit-3 address is required (flash proper error message)
-            if address == " ":
+            if address == " " or None:
                 flash('address is required for updating','error')
             # TODO edit-4 city is required (flash proper error message)
-            if city == " ":
+            if city == " " or None:
                 flash('city is required for updating','error')
             # TODO edit-5 state is required (flash proper error message)
             # TODO edit-5a state should be a valid state mentioned in pycountry for the selected state
             # hint see geography.py and pycountry documentation            
-            if state ==" ":
+            if state ==" " or None:
                 flash('Please enter a state ','error')
             country_code = request.args.get("country_code", default="", type=str)
             states = []
@@ -162,14 +163,14 @@ def edit(): # ucid - sg342 date - 04/03/2023
             # TODO edit-6 country is required (flash proper error message)
             # TODO edit-6a country should be a valid country mentioned in pycountry
             # hint see geography.py and pycountry documentation
-            if country ==" "or country!=list(pycountry.countries):
+            if country ==" "or country!=list(pycountry.countries) or None:
                 flash('Please enter a valid country name for updating','error')     
             # TODO edit-7 website is not required
-            if website == " ":
+            if website == " " or None:
                 flash('website is not required for updating','info')
             # TODO edit-8 zipcode is required (flash proper error message)            
             # note: call zip variable zipcode as zip is a built in function it could lead to issues
-            if zip == " ":
+            if zip == " " or None:
                 flash('zip code is required please enter properly ','error')
             # populate data dict with mappings
             has_error = False # use this to control whether or not an insert occurs            
@@ -182,6 +183,7 @@ def edit(): # ucid - sg342 date - 04/03/2023
                     if result.status:
                         print("updated record")
                         flash("Updated record", "success")
+                        resp = "Updated"
                 except Exception as e:
                     # TODO edit-10 make this user-friendly
                     print(f"{e}")
@@ -190,7 +192,7 @@ def edit(): # ucid - sg342 date - 04/03/2023
         row = {}
         try:
             # TODO edit-11 fetch the updated data
-            result = DB.selectOne("SELECT name,address,city,state,country,zip,website FROM IS601_MP3_Companies WHERE id = %s", id)
+            result = DB.selectOne("SELECT name, address, city, state, country, zip, website FROM IS601_MP3_Companies WHERE name = %s",name)
             if result.status:
                 row = result.row                
         except Exception as e:
