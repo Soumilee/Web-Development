@@ -127,21 +127,21 @@ def add(): #ucid - sg342 date - 04/03/2023
 def edit(): # ucid - sg342 date - 04/03/2023
     # TODO edit-1 request args id is required (flash proper error message)
     id = request.args.get("id")
-    resp = None
+    row = None
     if not id: # TODO update this for TODO edit-1
         flash('ID is required !!!','error')
     else:
-        if request.method == "POST":
+        if request.method == "POST" and request.form.get("name","address","city","state","country","zip","website"):
             data = {"id": id} # use this as needed, can convert to tuple if necessary
             # TODO edit-1 retrieve form data for name, address, city, state, country, zip, website
-            name = request.args.get("name")
-            address = request.args.get("address")
-            country = request.args.get("country")
-            state = request.args.get("state")
-            city = request.args.get("city")
-            zip = request.args.get("zip")
-            website = request.args.get("website")
-            print(request.args)
+            name = request.form.get("name")
+            address = request.form.get("address")
+            country = request.form.get("country")
+            state = request.form.get("state")
+            city = request.form.get("city")
+            zip = request.form.get("zip")
+            website = request.form.get("website")
+            print(request.form)
             # TODO edit-2 name is required (flash proper error message)
             if name == " " or None:
                 flash('name must be present for updating','error')
@@ -185,12 +185,11 @@ def edit(): # ucid - sg342 date - 04/03/2023
                     if result.status:
                         print("updated record")
                         flash("Updated record", "success")
-                        resp = "Updated"
+                        row = result.row
                 except Exception as e:
                     # TODO edit-10 make this user-friendly
                     print(f"{e}")
                     flash(f'The company information was not updated due to this error {str(e)}', "danger")
-                    resp = e
         row = {}
         try:
             # TODO edit-11 fetch the updated data
@@ -200,9 +199,9 @@ def edit(): # ucid - sg342 date - 04/03/2023
         except Exception as e:
             # TODO edit-12 make this user-friendly
             flash(f'Please address this issue so we can proceed with the information update {str(e)}', "danger")
-            resp = e
     # TODO edit-13 pass the company data to the render template
-    return render_template("edit_company.html", row=row)
+        row = {(name,name),(address,address),(city,city),(state,state),(country,country),(zip,zip),(website,website)}
+    return render_template("edit_company.html",row=row)
 
 @company.route("/delete", methods=["GET"])
 def delete(): #ucid - sg342 date - 04/03/2023

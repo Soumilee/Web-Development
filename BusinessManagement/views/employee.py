@@ -71,12 +71,12 @@ def search():
 def add():
     if request.method == "POST":
         # TODO add-1 retrieve form data for first_name, last_name, company, email
-        first_name = request.args.get("first_name",None)
-        last_name = request.args.get("last_name",None)
-        company_id = request.args.get("company_id",None)
-        email = request.args.get("email",None)
-        #print("----",request.args)
-        #print("The values that are received is : ",first_name, last_name, email, company_id )
+        first_name = request.args.get("first_name")
+        last_name = request.args.get("last_name")
+        company_id = request.args.get("company_id")
+        email = request.args.get("email")
+        print("----",request.args)
+        print("The values that are received is : ",first_name, last_name, email, company_id )
         resp = None
         # TODO add-2 first_name is required (flash proper error message)
         if first_name == " "or None:
@@ -105,7 +105,7 @@ def add():
                     flash("Created Employee Record", "success")
             except Exception as e:
                 # TODO add-7 make message user friendly
-                flash(f'The insertion could not be completed du to thid error {str(e)}', "danger")
+                flash(f'The insertion could not be completed due to this error {str(e)}', "danger")
                 resp = e
     return render_template("add_employee.html")
 
