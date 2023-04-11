@@ -44,7 +44,7 @@ def search():
     # TODO search-8 append limit (default 10) or limit greater than 1 and less than or equal to 100
     if limit and int(limit) > 0 and int(limit) <= 100:
         query += " LIMIT %s"
-        args.append(int(limit))
+        args['limit']=(int(limit))
     else:
         print("Limit out of bounds")
     # TODO search-9 provide a proper error message if limit isn't a number or if it's out of bounds
@@ -63,8 +63,9 @@ def search():
         error = e
     # hint: use allowed_columns in template to generate sort dropdown
     # hint2: convert allowed_columns into a list of tuples representing (value, label)
-    # do this prior to passing to render_template, but not before otherwise it can break validation   
-    return render_template("list_employees.html", result=rows, error=e)
+    # do this prior to passing to render_template, but not before otherwise it can break validation 
+    allowed_columns = [('first_name','first_name'),('last_name','last_name'),('email','email'),('company_name','company_name')]  
+    return render_template("list_employees.html", allowed_columns=allowed_columns)
 
 @employee.route("/add", methods=["GET","POST"])
 def add():
@@ -106,7 +107,7 @@ def add():
                 # TODO add-7 make message user friendly
                 flash(f'The insertion could not be completed du to thid error {str(e)}', "danger")
                 resp = e
-    return render_template("add_employee.html", resp=resp)
+    return render_template("add_employee.html")
 
 @employee.route("/edit", methods=["GET", "POST"])
 def edit():
@@ -161,7 +162,7 @@ def edit():
             # TODO edit-9 make this user-friendly
             flash(str(e), "danger")
     # TODO edit-10 pass the employee data to the render template
-    return render_template("edit_employee.html",row=row, result=result)
+    return render_template("edit_employee.html",row=row)
 
 @employee.route("/delete", methods=["GET"])
 def delete():
