@@ -28,7 +28,7 @@
                 <label class="visually-hidden" for="company">Company</label>
                 {{company_dropdown(request.args.get("company"))}}
             </div>
-            {{sort_filter(cols=["first_name","last_name","email","company_name"])}}
+            {{sort_filter(cols=allowed_columns)}}
             <div class="col">
                 <input type="submit" class="btn btn-primary" value="Filter" />
             </div>

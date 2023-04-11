@@ -5,6 +5,7 @@ company = Blueprint('company', __name__, url_prefix='/company')
 @company.route("/search", methods=["GET"])
 def search(): #ucid - sg342 04/03/2023
     name = request.args.get("name")
+    city = request.args.get("city")
     country = request.args.get("country")
     state = request.args.get("state")
     col = request.args.get("col")
@@ -59,8 +60,9 @@ def search(): #ucid - sg342 04/03/2023
         error = e
     # hint: use allowed_columns in template to generate sort dropdown
     # hint2: convert allowed_columns into a list of tuples representing (value, label)
-    # do this prior to passing to render_template, but not before otherwise it can break validation    
-    return render_template("list_companies.html", result=rows, error = error)
+    # do this prior to passing to render_template, but not before otherwise it can break validation   
+    allowed_columns =[('name','name'),('city','city'),('country','country'),('state','state')] 
+    return render_template("list_companies.html",allowed_columns=allowed_columns)
 
 @company.route("/add", methods=["GET","POST"])
 def add(): #ucid - sg342 date - 04/03/2023
@@ -119,7 +121,7 @@ def add(): #ucid - sg342 date - 04/03/2023
                 flash(f'The company was not added to the Table Sorry!!! Try again {str(e)}', "danger")
                 resp = e
         
-    return render_template("add_company.html",resp = resp)
+    return render_template("add_company.html")
 
 @company.route("/edit", methods=["GET", "POST"])
 def edit(): # ucid - sg342 date - 04/03/2023
@@ -192,7 +194,7 @@ def edit(): # ucid - sg342 date - 04/03/2023
         row = {}
         try:
             # TODO edit-11 fetch the updated data
-            result = DB.selectOne("SELECT name, address, city, state, country, zip, website FROM IS601_MP3_Companies WHERE name = %s",name)
+            result = DB.selectOne("SELECT name, address, city, state, country, zip, website FROM IS601_MP3_Companies WHERE id = %s",id)
             if result.status:
                 row = result.row                
         except Exception as e:
@@ -200,7 +202,7 @@ def edit(): # ucid - sg342 date - 04/03/2023
             flash(f'Please address this issue so we can proceed with the information update {str(e)}', "danger")
             resp = e
     # TODO edit-13 pass the company data to the render template
-    return render_template("edit_company.html", row=row, resp=resp)
+    return render_template("edit_company.html", row=row)
 
 @company.route("/delete", methods=["GET"])
 def delete(): #ucid - sg342 date - 04/03/2023

@@ -24,7 +24,7 @@
     <form method="GET">
         <div class="row">
             {{country_state_selector(layout="horizontal")}}
-            {{sort_filter(cols=["name","city","country","state"])}}
+            {{sort_filter(cols=allowed_columns)}}
             <div class="col">
                 <input type="submit" class="btn btn-primary" value="Filter" />
             </div>
