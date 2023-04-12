@@ -40,7 +40,8 @@ def importCSV():
             # DON'T EDIT
             employee_query = """
              INSERT INTO IS601_MP3_Employees (first_name, last_name, email, company_id)
-                        VALUES (%(first_name)s, %(last_name)s, %(email)s, (SELECT id FROM IS601_MP3_Companies WHERE name = %(company_name)s LIMIT 1))
+                        VALUES (%(first_name)s, %(last_name)s, %(email)s, (SELECT id FROM IS601_MP3_Companies 
+                        WHERE name = %(company_name)s LIMIT 1))
                         ON DUPLICATE KEY UPDATE first_name=%(first_name)s, 
                         last_name = %(last_name)s, email = %(email)s, 
                         company_id = (SELECT id FROM IS601_MP3_Companies WHERE name=%(company_name)s LIMIT 1)
