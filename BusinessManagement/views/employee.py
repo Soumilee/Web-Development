@@ -10,8 +10,8 @@ def search():
     # DO NOT DELETE PROVIDED COMMENTS ucid - sg342 date 04/04/2023
     # TODO search-1 retrieve employee id as id, first_name, last_name, email, company_id, company_name using a LEFT JOIN
     query = """SELECT e.id, e.first_name, e.last_name, e.company_id, c.name
-     FROM employees e LEFT JOIN companies c ON e.company_id = c.id WHERE 1=1"""
-    args = {} # <--- add values to replace %s/%(named)s placeholders
+     FROM IS601_MP3_Employees e LEFT JOIN IS601_MP3_Companies c ON e.company_id = c.id WHERE 1=1"""
+    args = {"first_name":"","last_name":"","email":"","company_id":"","col":"","order":"","limit":""} # <--- add values to replace %s/%(named)s placeholders
     allowed_columns = ["first_name", "last_name", "email", "company_name"]
     # TODO search-2 get fn, ln, email, company, column, order, limit from request args ucid - sg342 date 04/04/2023
     first_name = request.args.get("first_name")
@@ -21,22 +21,24 @@ def search():
     col = request.args.get("col")
     order = request.args.get("order")
     limit = request.args.get("limit", 10)
+    print(request.args)
+    print(request.form)
     # TODO search-3 append like filter for first_name if provided ucid - sg342 date 04/04/2023
     if first_name:
         query += "AND first_name like %s"
-        rows.append(f"%{first_name}%")
+        args["first_name"] = (f"{first_name}")
     # TODO search-4 append like filter for last_name if provided ucid - sg342 date 04/04/2023
     if last_name:
         query += "AND last_name like %s"
-        rows.append(f"%{last_name}%")
+        args["last_name"] = (f"{last_name}")
     # TODO search-5 append like filter for email if provided ucid - sg342 date 04/04/2023
     if email:
         query += "AND email like %s"
-        rows.append(f"%{email}%")
+        args["email"] = (f"{email}")
     # TODO search-6 append equality filter for company_id if provided ucid - sg342 date 04/04/2023
     if company_id:
         query += "AND company_id == %s"
-        rows.append(f'%{company_id}%')
+        args["company_id"] = (f'{company_id}')
     # TODO search-7 append sorting if column and order are provided and within the allowed columns and order options (asc, desc)
     if col and order:
         if col in ["name","city","country","state"] \
@@ -44,13 +46,12 @@ def search():
             query += f" ORDER BY {col} {order}"
     # TODO search-8 append limit (default 10) or limit greater than 1 and less than or equal to 100 ucid - sg342 date 04/04/2023
     if limit and int(limit) > 0 and int(limit) <= 100:
-        query += " LIMIT %s"
-        rows.append(int(limit))
+        query += " LIMIT %(limit)s"
     else:
         print("Limit out of bounds")
     # TODO search-9 provide a proper error message if limit isn't a number or if it's out of bounds
     limit = +1 # TODO change this per the above requirements
-    query += " LIMIT %(limit)s"
+   
     args["limit"] = limit
     print("query",query)
     print("args", args)
@@ -76,7 +77,8 @@ def add():
         last_name = request.form.get("last_name")
         company_id = request.form.get("company_id")
         email = request.form.get("email")
-        print("----",request.args)
+        print(request.args)
+        print(request.form)
         print("The values that are received is : ",first_name, last_name, email, company_id )
         resp = None
         # TODO add-2 first_name is required (flash proper error message) ucid - sg342 date 04/04/2023
