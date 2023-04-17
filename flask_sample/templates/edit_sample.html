@@ -1,3 +1,28 @@
+<<<<<<< HEAD
+{% extends "layout.html" %}
+{% block title %}Add Sample{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="h1">Edit Sample</div>
+    <div>
+        <form method="POST">
+            <div class="form-group mb-3">
+                <label class="form-label" for="n">Key</label>
+                <input class="form-control" id="n" name="key" readonly value="{{row.name}}" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="v">Value</label>
+                <input class="form-control" id="v" name="value" value="{{row.val}}" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Update Sample" />
+        </form>
+    </div>
+</div>
+{% endblock %}
+=======
 from flask import Blueprint, redirect, request, render_template, url_for
 
 from sql.db import DB
@@ -104,3 +129,4 @@ def delete():
         # but we want to persist the other query args
         del args["id"]
     return redirect(url_for("sample.list", **args))
+>>>>>>> 6692559a2746f6a1736d3afe6b526c42b6f06227

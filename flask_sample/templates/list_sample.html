@@ -19,7 +19,12 @@
                 <option value="">Choose...</option>
                 {% for op in options %}
                 {# using an inline if to output the selected attribute if it matches the op #}
+<<<<<<< HEAD
+                <option {{'selected' if request.args.get('col')==op }} value="{{op}}">
+                    {{op|capitalize}}</option>
+=======
                 <option {{'selected' if request.args.get('col')==op }} value="{{op}}">{{op|capitalize}}</option>
+>>>>>>> 6692559a2746f6a1736d3afe6b526c42b6f06227
                 {% endfor %}
             </select>
         </div>
@@ -69,9 +74,14 @@
         {% else %}
         <p>No results to show</p>
         {% endif %}
+<<<<<<< HEAD
+    </table>
+</div>
+=======
 </div>
 {% if error %}
 {{error}}
 {% endif %}
+>>>>>>> 6692559a2746f6a1736d3afe6b526c42b6f06227
 </div>
 {% endblock %}
