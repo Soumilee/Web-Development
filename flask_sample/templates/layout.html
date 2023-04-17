@@ -16,18 +16,13 @@
             height: 60px;
             line-height: 60px;
         }
-
-        .header {
-            top: 0;
-            height: 60px;
-            line-height: 60px;
-        }
     </style>
     <title>{% block title %}{% endblock %} - Sample</title>
     {% endblock %}
 </head>
 
 <body>
+<<<<<<< HEAD
     <div id="header">
         {% include 'nav.html' %}
         {% include 'flash.html' %}
@@ -36,6 +31,29 @@
                 text-transform: capitalize;
             }
         </style>
+=======
+    <div id="header" class="header bg-light text-center">
+        <nav class="navbar navbar-expand-lg bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Sample</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('sample.add')}}">Add</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{url_for('sample.list')}}">List</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+>>>>>>> 6692559a2746f6a1736d3afe6b526c42b6f06227
     </div>
     <div id="content">{% block content %}{% endblock %}</div>
     <div id="footer" class="footer bg-light text-center">
