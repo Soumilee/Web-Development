@@ -12,7 +12,7 @@ from flask_principal import identity_loaded, RoleNeed, UserNeed, Principal
 CURR_DIR = os.path.dirname(os.path.abspath(__file__))
 print(CURR_DIR)
 sys.path.append(CURR_DIR)
-
+#ucid sg342
 # custom error pages
 def page_not_found(e):
     return render_template('404.html'), 404
