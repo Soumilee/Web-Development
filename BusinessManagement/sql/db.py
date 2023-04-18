@@ -1,5 +1,7 @@
 from enum import Enum
-from mysql.connector import Error
+import pymysql
+#from mysql.connector import Error
+from pymysql import Error
 import json
 
 class CRUD(Enum):
@@ -16,11 +18,11 @@ class DBResponse:
         if row is not None:
             self.row = row
         else:
-            self.row = None # return none
+            self.row = None
         if rows is not None:
             self.rows = rows
         else:
-            self.rows = [] # return empty list
+            self.rows = []
     def __str__(self):
         return json.dumps(self.__dict__)
 
@@ -28,14 +30,13 @@ class DB:
     db = None
     def __runQuery(op, isMany, queryString, args = None):
         response = None
-       
+        #print(f"query {queryString} args {args}")
         try:
             db = DB.getDB()
-            cursor = db.cursor(dictionary=True)
+            cursor = db.cursor(pymysql.cursors.DictCursor)
             status = False
             if not isMany or op == CRUD.READ:
                 if args is not None and len(args) > 0:
-                    # convert dict for named placeholder mapping
                     if type(args[0]) is dict:
                         args = {k: v for d in args for k, v in d.items()}
                     status = cursor.execute(queryString, args)
@@ -51,14 +52,18 @@ class DB:
                 if not isMany:
                     result = cursor.fetchone()
                     # response = {"status": True if status is None else False, "row": result}
-                    status = True if status is None else False
+                    
+                    status = True if status >= 0 else False
                     response = DBResponse(status, result)
                 else:
                     result = cursor.fetchall()
-                    status = True if status is None else False
+                    print(f"db.py status {status}")
+                    status = True if status >= 0 else False
                     response = DBResponse(status, None, result)
             else:
-                status = True if status is None else False
+                if op != CRUD.ALTER:
+                    db.commit()
+                status = True if status >= 0 else False
                 response = DBResponse(status)
             try:
                 cursor.close()
@@ -66,8 +71,8 @@ class DB:
                 print("cursor close error", ce)
         
         except Error as e:
-            if e.errno == -1:
-                print("closing due to error")
+            #if e.errno == -1:
+            if e.args[0] == -1:
                 DB.close()
             # converting to a plain exception so other modules don't need to import mysql.connector.Error
             # this will let you more easily swap out DB connectors without needing to refactor your code, just this class
@@ -88,8 +93,6 @@ class DB:
             return DB.__runQuery(CRUD.CREATE, False, queryString)
         elif queryString.upper().startswith("ALTER"):
             return DB.__runQuery(CRUD.ALTER, False, queryString)
-        elif queryString.upper().startswith("INSERT"):
-            return DB.insertOne(queryString, )
         else:
             return DB.__runQuery(CRUD.ALTER, False, queryString)
             #raise Exception("Please use one of the abstracted methods for this query")
@@ -122,28 +125,43 @@ class DB:
 
     @staticmethod
     def getDB():
-        if DB.db is None or DB.db.is_connected() == False:
-            import mysql.connector
+        if DB.db is None or DB.db.open == False:
+            #import mysql.connector
+            #import pymysql
             import os
             import re
             from dotenv import load_dotenv
             load_dotenv()
             db_url  = os.environ.get("DB_URL")
-            data = re.findall("mysql:\/\/(\w+):(\w+)@([\w\.]+):([\d]+)\/([\w]+)", db_url)
-            if len(data) > 0:
-                data = data[0]
-                if len(data) >= 5:
-                    try:
-                        user,password,host,port,database = data
-                        DB.db = mysql.connector.connect(host=host, user=user, password=password, database=database, port=port,
-                        connection_timeout=10)
-                        DB.db.autocommit = True
-                    except Error as e:
-                        print("Error while connecting to MySQL", e)
+            from urllib.parse import urlparse
+            url = urlparse(db_url)
+            if url:
+                user = url.username
+                password = url.password
+                host = url.hostname
+                port = url.port
+                database = url.path.strip("/")
+                try:
+                    DB.db =  pymysql.connect(host=host, user=user, password=password, database=database, port=int(port))
+                except Error as e:
+                    print("Error while connecting to MySQL", e)
+                    raise e
+            else: # old logic as fallback
+                data = re.findall("mysql:\/\/(\w+):(\w+)@([\w\.]+):([\d]+)\/([\w]+)", db_url)
+                if len(data) > 0:
+                    data = data[0]
+                    if len(data) >= 5:
+                        try:
+                            user,password,host,port,database = data
+                            #DB.db = mysql.connector.connect(host=host, user=user, password=password, database=database, port=port,
+                            DB.db = pymysql.connect(host=host, user=user, password=password, database=database, port=int(port))
+                        except Error as e:
+                            print("Error while connecting to MySQL", e)
+                            raise e
+                    else:
+                        raise Exception("Missing connection details")
                 else:
-                    raise Exception("Missing connection details")
-            else:
-                raise Exception("Invalid connection string")
+                    raise Exception("Invalid connection string")
         return DB.db
 
 if __name__ == "__main__":
