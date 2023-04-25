@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}Transactions{% endblock %}
+{% block content %}
+<h1 class="pt-5 pb-2">Transactions</h1>
+      <p class="lead alert alert-warning">All the Transactions done a present here</p>
+	  <p class="ml-4"><a href="{{ url_for('auth.landing_page') }}">Return to Profile</a></p>
+		<table class="table">
+			<tr>
+				<th>Source Account</th>
+				<th>Destination Account</th>
+				<th>Amount</th>
+				<th>Type</th>
+				<th>Memo</th>
+                <th>Balance</th>
+                <th>Performed on</th>
+			</tr>
+			<!-- here is a for-loop to give us all the socks -->
+			{% for trans in Transactions %}
+			<tr>
+				<td>{{ trans. }}</td>
+				<td>{{ sock.color }}</td>
+				<td>${{ sock.price }}</td>
+				<td>{{ sock.quantity }}</td>
+				<td>{{ sock.updated }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+{% end block %}

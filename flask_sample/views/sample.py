@@ -1,57 +1,37 @@
 from flask import Blueprint, redirect, request, render_template, url_for, flash
-
+import random
 from sql.db import DB
 sample = Blueprint('sample', __name__, url_prefix='/sample')
-
-
 @sample.route('/add', methods=['GET', 'POST'])
-def add():
-    k = request.form.get("key", None)
-    v = request.form.get("value", None)
-    if k and v:
-        try:
+def create_account():
+    account_type = request.form.get("type", None)
+    deposit = request.form.get("deposit", None)
+    if account_type and deposit>=5:
+        try:           
+            account_no = "%0.12d" % random.randint(0,999999999999)
             result = DB.insertOne(
-                "INSERT INTO IS601_Sample (name, val) VALUES(%s, %s)", k, v)
+                """INSERT INTO IS601_Accounts (account_number,balance,account_type) 
+                   VALUES(%s, %s, %s)""",account_no,deposit,account_type)
             if result.status:
-                flash("Created Record", "success")
+                flash("Created Account", "success")
         except Exception as e:
-            # TODO make this user-friendly
             flash(e, "danger")
-
-    return render_template("add_sample.html")
+    else:
+        flash("The account type must be checking and minimum deposit must be 5$","error")
+    return render_template("create_account.html")
 
 @sample.route('/list', methods=['GET'])
-def list():
-    key = request.args.get("name")
-    col = request.args.get("col")
-    order = request.args.get("order")
-    limit = request.args.get("limit", 10)
+def list_account():
+    account_number = request.args.get("account_number")
+    account_type = request.args.get("account_type")
+    created = request.args.get("created")
+    limit = request.args.get("limit", 5)
     args = []
-    print(f"col {col} order {order}")
-    # dynamically build our query and data mappings
-    # use the WHERE true trick so we can easily append conditions without caring if a condition
-    # already was applied (no need to check if WHERE exists)
-    query = "SELECT id, name, val, created, modified from IS601_Sample WHERE 1=1"
-    if key:
-        query += " AND name like %s"
-        args.append(f"%{key}%")
-    if col and order:
-        # incorrect
-        # these get passed as safe strings rather than sql keywords
-        # query += f" ORDER BY %s %s"
-        # args.append(col)
-        # args.append(order)
-        # correct - validate fully that col and order are expected values
-        # this will be directly injected and if not validated could
-        # lead to sql injection
-        if col in ["name","val","created","modified"] \
-            and order in ["asc", "desc"]:
-            query += f" ORDER BY {col} {order}"
-
-    if limit and int(limit) > 0 and int(limit) <= 100:
-        # technically this should follow the same rules as col/order
-        # but it seems to work with the placeholder mapping with
-        # this connector
+    query = "SELECT account_number, user_id, balance, account_type, created, modified from IS601_Accounts WHERE 1=1"
+    if account_number:
+        query += " AND account_number == %s"
+        args.append(f"%{account_number}%")
+    if limit and int(limit) > 0 and int(limit) <= 5:
         query += " LIMIT %s"
         args.append(int(limit))
     rows = []
@@ -62,53 +42,35 @@ def list():
         if resp.status:
             rows = resp.rows
     except Exception as e:
-        # TODO make this user-friendly
-        flash(e, "danger")
-    
-    return render_template("list_sample.html", resp=rows)
+        flash(e, "danger")    
+    return render_template("list_account.html", resp=rows)
 
-@sample.route("/edit", methods=["GET", "POST"])
-def edit():
-    id = request.args.get("id")
-    row = None
-    if id is None:
-        flash("ID is missing", "danger")
-        return redirect("sample.list")
+@sample.route('/transaction', methods=['GET','POST']) # will perform deposit and withdraw 
+def commit_transaction():
+    source_account = request.form.get("name")
+    destination_account = request.form.get("col")
+    amount = request.form.get("order")
+    transaction_type = request.form.get("limit", 5)
+    memo = request.form.get()
+    if source_account is None:
+        flash("The Source Bank Account must be inserted","error")
+        return redirect("sample.commit_transaction")
+    if destination_account is None:
+        flash("The destination account must be inserted","error")
+        return redirect("sample.commit_transaction")
+    if amount is None:
+        flash("There must be a minimum amount of 1.00$","warning")
+        return redirect("sample.commit_transaction")
     else:
-        if request.method == "POST" and request.form.get("value"):
-            val = request.form.get("value")
+        if request.method == "POST":
             try:
-                result = DB.update("UPDATE IS601_Sample SET val = %s WHERE id = %s", val, id)
-                if result.status:
-                    flash("Updated record", "success")
+                result = DB.insertOne("""INSERT INTO IS601_Transactions (account_src,account_dest,balance_change,transaction_type,memo) 
+                   VALUES(%s, %s, %s,%s,%s)""",source_account,destination_account,amount,transaction_type,memo)
+                balance = "SELECT balance FROM IS601_Accounts WHERE 1=1"
+                balance = +amount
+                deposit = DB.update("""UPDATE IS601_Accounts SET balance = %s WHERE account_number = %s """,balance,source_account)
+                if result.status and deposit.status:
+                    flash("The transaction was complete","message")
             except Exception as e:
-                # TODO make this user-friendly
-                flash(e, "danger")
-        try:
-            result = DB.selectOne("SELECT name, val FROM IS601_Sample WHERE id = %s", id)
-            if result.status:
-                row = result.row
-        except Exception as e:
-            # TODO make this user-friendly
-            flash(e, "danger")
-    return render_template("edit_sample.html", row=row)
-
-@sample.route("/delete", methods=["GET"])
-def delete():
-    id = request.args.get("id")
-    # make a mutable dict
-    args = {**request.args}
-    if id:
-        try:
-            result = DB.delete("DELETE FROM IS601_Sample WHERE id = %s", id)
-            if result.status:
-                flash("Deleted record", "success")
-        except Exception as e:
-            # TODO make this user-friendly
-            flash(e, "danger")
-        # TODO pass along feedback
-
-        # remove the id args since we don't need it in the list route
-        # but we want to persist the other query args
-        del args["id"]
-    return redirect(url_for("sample.list", **args))
+                flash(e, "danger")    
+    return render_template("transactions.html")

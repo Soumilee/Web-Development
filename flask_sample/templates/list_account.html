@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block title %}List Accounts{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="h1">List Accounts</div>
+    <form class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            <label class="form-label" for="acc">Accounts</label>
+            <input type="text" name="acc" class="form-control" id="acc" placeholder="enter your 12 digit acc No"
+                value="{{request.args.get('name') or ''}}">
+        </div>
+        <div class="col-12">
+            {% set options = ["account_number", "account_type", "created"] %}
+            <label class="form-label" for="col">Column</label>
+            <select class="form-select" id="col" name="col" value="{{request.args.get('col')}}">
+                <option value="">Choose...</option>
+                {% for op in options %}
+                {# using an inline if to output the selected attribute if it matches the op #}
+                <option {{'selected' if request.args.get('col')==op }} value="{{op}}">
+                    {{op|capitalize}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label" for="limit">Limit</label>
+            <input class="form-control" type="number" min="1" max="5" id="limit" name="limit"
+                value="{{request.args.get('limit') or '5'}}" />
+        </div>
+        <div class="col-12">
+            <!-- hack to align button with inputs in inline form with labels-->
+            <div>&nbsp;</div>
+            <button type="submit" class="btn btn-primary mt-2">Filter</button>
+            <!--trick to reset a prefilled form to empty-->
+            <a href="?" class="btn btn-secondary mt-2">Reset</a>
+        </div>
+    </form>
+        <table class="table">
+            {% if resp and resp|length > 0 %}
+			<tr>
+				<th>Account Number :</th>
+				<th>User ID :</th>
+				<th>Balance :</th>
+				<th>Account Type :</th>
+				<th>Created :</th>
+                <th>Modified :</th>
+			</tr>
+			<!-- here is a for-loop to give us all the socks -->
+			{% for accoun in Accounts %}
+			<tr>
+				<td>{{ acc.account_number }}</td>
+				<td>{{ acc.user_id }}</td>
+				<td>${{ acc.balance }}</td>
+				<td>{{ acc.account_type }}</td>
+				<td>{{ acc.created }}</td>
+                <td>{{ acc.modified }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+        {% else %}
+        <p>No results to show</p>
+        {% endif %}
+    </table>
+</div>
+</div>
+{% endblock %}
