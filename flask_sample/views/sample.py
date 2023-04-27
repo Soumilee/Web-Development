@@ -35,8 +35,8 @@ def create_account():
 @sample.route('/list', methods=['GET'])
 def list_account():
     user_id = current_user.get_id()
-    args = []
-    query = "SELECT id,account_number,balance,account_type,created,modified FROM IS601_Accounts WHERE user_id = %s",user_id
+    args = [user_id]
+    query = "SELECT id,account_number,balance,account_type,created,modified FROM IS601_Accounts WHERE user_id = %s"
     limit = request.args.get("limit", 5)
     if limit and int(limit)>0 and int(limit)<=5:
         query += " LIMIT %s"
@@ -56,8 +56,8 @@ def list_account():
 @sample.route('/list_transaction', methods=['GET']) # transaction account source and destination will contain the account id NOT account number
 def list_transactions():
     user_id = current_user.get_id()
-    args = []
-    query = "SELECT account_src_id, account_dest_id, balance_change, transaction_type, memo, expected_total, created, modified FROM IS601_Transactions WHERE user_id = %s",user_id
+    args = [user_id]
+    query = "SELECT account_src_id, account_dest_id, balance_change, transaction_type, memo, expected_total, created, modified FROM IS601_Transactions WHERE user_id = %s"
     limit = request.args.get("limit",10)
     if limit and int(limit) > 0 and int(limit) >=10:
         query += " LIMIT %s"
@@ -135,7 +135,7 @@ def deposit():
 def withdraw():
     acc_no = request.form.get("acc_no")
     type = request.form.get("type")
-    amt = request.form.get("amt")
+    amt = request.form.get("amt",0)
     balance = "SELECT balance FROM IS601_Accounts WHERE 1=1"
     if acc_no is None:
         flash("Please select the account for deposit","error")
