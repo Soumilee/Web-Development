@@ -6,26 +6,42 @@
     {{current_user.username}}
 </div>
 <body>
-    <div id = "header">
-    </div>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('sample.create_account')}}">Create Bank Account</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{url_for('sample.list_account')}}">My Accounts</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href = "{{url_for('sample.commit_transaction')}}">Transfer Money</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href = "{{url_for('sample.deposit')}}">Deposit</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href = "{{url_for('sample.withdraw')}}">Withdraw</a>
-            </li>
-        </ul>
-    </div>
+    <h2 style="text-align: center">Things to do</h2>
+    <style>
+        a {
+            text-decoration: none;
+            color: red;
+        }
+    </style>
+    <a target="_blank" href="{{url_for('sample.create_account')}}" style="width: 100%;">
+        <div class="card">
+            <h2 class="title">Create Bank Account</h2>
+            <p><button>Go..</button></p>
+        </div>
+    </a>
+    <a target="_blank" href="{{url_for('sample.list_account')}}" style="flex: 1">
+        <div class="card"
+            <h1 class="title">My Accounts</h1>
+            <p><button>Go..</button></p>
+        </div>
+    </a>            
+    <a target="_blank" href="{{url_for('sample.commit_transaction')}}" style="flex: 1">
+        <div class ="card"
+            <h1 class="title">Transfer Money</h1>
+            <p><button>Go..</button></p>
+        </div>
+    </a>   
+    <a target="_blank" href="{{url_for('sample.deposit')}}" style="flex: 1">
+        <div class ="card"
+            <h1 class="title">Deposit Money</h1>
+            <p><button>Go..</button></p>
+        </div>
+    </a>  
+    <a target="_blank" href="{{url_for('sample.withdraw')}}" style="flex: 1">
+        <div class ="card"
+            <h1 class="title">Withdraw Money</h1>
+            <p><button>Go..</button></p>
+        </div>
+    </a>             
 </body>
 {% endblock %}

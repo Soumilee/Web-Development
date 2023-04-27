@@ -6,8 +6,8 @@
 	  <p class="ml-4"><a href="{{ url_for('auth.landing_page') }}">Return to Profile</a></p>
 		<table class="table">
 			<tr>
-				<th>Source Account</th>
-				<th>Destination Account</th>
+				<th>Source Account Id:</th>
+				<th>Destination Account Id:</th>
 				<th>Amount</th>
 				<th>Type</th>
 				<th>Memo</th>
@@ -17,11 +17,13 @@
 			<!-- here is a for-loop to give us all the socks -->
 			{% for trans in Transactions %}
 			<tr>
-				<td>{{ trans. }}</td>
-				<td>{{ sock.color }}</td>
-				<td>${{ sock.price }}</td>
-				<td>{{ sock.quantity }}</td>
-				<td>{{ sock.updated }}</td>
+				<td>{{ trans.account_src_id }}</td>
+				<td>{{ trans.account_dest_id }}</td>
+				<td>${{ trans.balance_change }}</td>
+				<td>{{ trans.transaction_type }}</td>
+				<td>{{ trans.memo }}</td>
+				<td>${{ trans.expected_total }}</td>
+				<td>{{ trans.created }}</td>
 			</tr>
 			{% endfor %}
 		</table>

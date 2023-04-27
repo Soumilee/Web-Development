@@ -1,4 +1,5 @@
 from flask import Blueprint, redirect, request, render_template, url_for, flash
+from flask_login import login_required, current_user
 import random
 from sql.db import DB
 sample = Blueprint('sample', __name__, url_prefix='/sample')
@@ -9,35 +10,35 @@ def create_account():
     if account_type and deposit>=5:
         try:           
             account_no = "%0.12d" % random.randint(0,999999999999)
-            result = DB.insertOne(
-                """INSERT INTO IS601_Accounts (account_number,balance,account_type) 
-                   VALUES(%s, %s, %s)""",account_no,deposit,account_type)
-            if result.status:
+            result = DB.insertOne("INSERT INTO IS601_Accounts (account_number,balance,account_type) VALUES(%s, %s, %s)",account_no,deposit,account_type)
+            #after the new account is created an id is generated so we have to get that id and insert it into the transaction table
+            acc_id = DB.selectOne("SELECT id FROM IS601_Accounts WHERE 1=1")
+            #we also have to get the world acc id cannot hard code it since id may change later
+            world_id = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s","000000000000")
+            query = DB.insertOne("""INSERT INTO IS601_Transactions (account_src_id,account_dest_id,balance_change,transaction_type,memo,expected_total) 
+                                VALUES(%s, %s, %s, %s, %s, %s)""",acc_id,world_id,deposit,"deposit","account creation",deposit)
+            world_bal = DB.selectOne("SELECT balance FROM IS601_Accounts WHERE id = %s",world_id)
+            world_bal = world_bal - 5 
+            query2 = DB.insertOne("""INSERT INTO IS601_Transactions (account_src_id, account_dest_id, balance_change, transaction_type, memo, expected_total)
+                                VALUES (%s,%s,%s,%s,%s,%s)""",world_id,acc_id,deposit,"withdraw","withdrawn for account creation",world_bal)
+            world_acc = DB.update("UPDATE IS601_Accounts SET balance = %s WHERE id = %s",world_bal,world_id)
+            if result.status and query.status and world_acc.status and query2.status:
                 flash("Created Account", "success")
+                return redirect("list_account.html")
         except Exception as e:
             flash(e, "danger")
+            print(e)
     else:
         flash("The account type must be checking and minimum deposit must be 5$","error")
     return render_template("create_account.html")
 
 @sample.route('/list', methods=['GET'])
 def list_account():
-    account_number = request.args.get("account_number")
-    account_type = request.args.get("account_type")
-    created = request.args.get("created")
-    limit = request.args.get("limit", 5)
+    user_id = current_user.get_id()
     args = []
-    query = "SELECT account_number, user_id, balance, account_type, created, modified from IS601_Accounts WHERE 1=1"
-    if account_number:
-        query += " AND account_number == %s"
-        args.append(f"%{account_number}%")
-    if account_type:
-        query += " AND account_type LIKE %s"
-        args.append(f"%{account_type}%")
-    if created:
-        query += " AND created == %s"
-        args.append(f"%{created}%")
-    if limit and int(limit) > 0 and int(limit) <= 5:
+    query = "SELECT id,account_number,balance,account_type,created,modified FROM IS601_Accounts WHERE user_id = %s",user_id
+    limit = request.args.get("limit", 5)
+    if limit and int(limit)>0 and int(limit)<=5:
         query += " LIMIT %s"
         args.append(int(limit))
     rows = []
@@ -48,20 +49,41 @@ def list_account():
         if resp.status:
             rows = resp.rows
     except Exception as e:
-        flash(e, "danger")    
+        flash(e, "danger")   
+        print(e) 
     return render_template("list_account.html", resp=rows)
 
-@sample.route('/transaction', methods=['GET','POST']) # will perform transaction in between accounts
+@sample.route('/list_transaction', methods=['GET']) # transaction account source and destination will contain the account id NOT account number
+def list_transactions():
+    user_id = current_user.get_id()
+    args = []
+    query = "SELECT account_src_id, account_dest_id, balance_change, transaction_type, memo, expected_total, created, modified FROM IS601_Transactions WHERE user_id = %s",user_id
+    limit = request.args.get("limit",10)
+    if limit and int(limit) > 0 and int(limit) >=10:
+        query += " LIMIT %s"
+        args.append(int(limit))
+    rows = []
+    try:
+        print(query)
+        resp = DB.selectAll(query, *args)
+        if resp.status:
+            rows = resp.rows
+    except Exception as e:
+        flash(e,"danger")
+        print(e)
+    return render_template("list_transactions.html", resp=rows)
+
+@sample.route('/commit_transaction', methods=['GET','POST']) # will perform transaction in between accounts
 def commit_transaction():
-    source_account = request.form.get("name")
-    destination_account = request.form.get("col")
-    amount = request.form.get("order")
-    transaction_type = request.form.get("limit", 5)
+    source_account_id = DB.selectAll("SELECT id FROM IS601_Accounts WHERE 1=1")
+    destination_account_id = DB.selectAll("SELECT id FROM IS601_Accounts WHERE 1=1")
+    amount = request.form.get("amt")
+    transaction_type = request.form.get("type")
     memo = request.form.get("memo")
-    if source_account is None:
+    if source_account_id is None:
         flash("The Source Bank Account must be inserted","error")
         return redirect("sample.commit_transaction")
-    if destination_account is None:
+    if destination_account_id is None:
         flash("The destination account must be inserted","error")
         return redirect("sample.commit_transaction")
     if amount is None:
@@ -70,16 +92,16 @@ def commit_transaction():
     else:
         if request.method == "POST":
             try:
-                result = DB.insertOne("""INSERT INTO IS601_Transactions (account_src,account_dest,balance_change,transaction_type,memo) 
-                   VALUES(%s, %s, %s,%s,%s)""",source_account,destination_account,amount,transaction_type,memo)
+                result = DB.insertOne("""INSERT INTO IS601_Transactions (account_src,account_dest,balance_change,transaction_type,memo,balance_change) 
+                   VALUES(%s, %s, %s,%s,%s)""",source_account_id,destination_account_id,amount,transaction_type,memo)
                 balance = "SELECT balance FROM IS601_Accounts WHERE 1=1"
                 balance = +amount
-                deposit = DB.update("""UPDATE IS601_Accounts SET balance = %s WHERE account_number = %s """,balance,source_account)
+                deposit = DB.update("""UPDATE IS601_Accounts SET balance = %s WHERE account_number = %s """,balance,source_account_id)
                 if result.status and deposit.status:
                     flash("The transaction was complete","message")
             except Exception as e:
                 flash(e, "danger")    
-    return render_template("transactions.html")
+    return render_template("commit_transaction.html",source_account_id=source_account_id,destination_account_id=destination_account_id)
 
 @sample.route('/deposit', methods=['GET','POST']) #this will perform deposit in which user will deposit money into their account from world account
 def deposit():
@@ -90,14 +112,15 @@ def deposit():
         flash("Please select the account for deposit","error")
     if type is None:
         flash("Please select the type of account","error")
-    if amt<=1:
+    # amt = int(amt)
+    if amt is None or amt<=1:
         flash('Please select an amount greater than 1$',"error")
     else:
         if request.method == "POST":
             try:                
                 balance = "SELECT balance FROM IS601_Accounts WHERE 1=1"
                 balance = + amt
-                world_bal = ("SELECT balance FROM IS601_Accounts WHERE account_umber = %s","000000000000")
+                world_bal = "SELECT balance FROM IS601_Accounts WHERE account_number = %s","000000000000"
                 result = DB.update("""UPDATE IS601_Accounts SET balance = %s WHERE account_number = %s """,balance,acc_no)
                 query = DB.insertOne("""INSERT INTO IS601_Transactions VALUES (account_src,account_dest,balance_change,transaction_type,memo) 
                     VALUES(%s, %s, %s,%s,%s)""","000000000000",acc_no,amt,"deposit","deposit done by self")
