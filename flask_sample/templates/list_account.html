@@ -29,7 +29,7 @@
                 <th>Modified :</th>
 			</tr>
 			<!-- here is a for-loop to give us all the accounts -->
-			{% for acc in Accounts %}
+			{% for acc in resp %}
 			<tr>
                 <td>{{ acc.id }}</td>
 				<td>{{ acc.account_number }}</td>
@@ -38,10 +38,10 @@
 				<td>{{ acc.account_type }}</td>
 				<td>{{ acc.created }}</td>
                 <td>{{ acc.modified }}</td>
-			    {% endfor %}
-                <td><a href="{{url_for('sample.list_transactions',user_id=user_id.get('user_id'), **request.args)}}"
+                <td><a href="{{url_for('sample.list_transactions',acc_id=acc.id, **request.args)}}"
                     class="btn btn-danger btn-sm">go</a>
                 </td>
+			    {% endfor %}
             </tr>
 		</table>
         {% else %}

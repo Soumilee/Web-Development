@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block title %}Transactions{% endblock %}
 {% block content %}
-<h1 class="pt-5 pb-2">Transactions</h1>
+<div class="container-fluid">
+	<div class="h1">Transactions</div>
       <p class="lead alert alert-warning">All the Transactions done a present here</p>
 	  <p class="ml-4"><a href="{{ url_for('auth.landing_page') }}">Return to Profile</a></p>
 		<table class="table">
@@ -15,7 +16,7 @@
                 <th>Performed on</th>
 			</tr>
 			<!-- here is a for-loop to give us all the socks -->
-			{% for trans in Transactions %}
+			{% for trans in resp %}
 			<tr>
 				<td>{{ trans.account_src_id }}</td>
 				<td>{{ trans.account_dest_id }}</td>
@@ -27,4 +28,6 @@
 			</tr>
 			{% endfor %}
 		</table>
-{% end block %}
+	</div>
+</div>
+{% endblock %}

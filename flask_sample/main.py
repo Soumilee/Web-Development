@@ -79,13 +79,27 @@ def create_app(config_filename=''):
             if hasattr(current_user, 'roles'):
                 for role in current_user.roles:
                     identity.provides.add(RoleNeed(role.name))
+            return app
+    
+        @app.template_global()
+        def get_accounts():
+            from sql.db import DB
+            try:
+                print("get accounts")
+                # note this triggers for GET and POST
+                result = DB.selectAll("SELECT id, account_number, balance FROM IS601_Accounts")
+                if result.status:
+                    return result.rows or []
+            except Exception as e:
+                print(e)
+            return []
+        # DON'T DELETE, this cleans up the DB connection after each request
+        # this avoids sleeping queries
+        @app.teardown_request 
+        def after_request_cleanup(ctx):
+            from sql.db import DB
+            DB.close()
         return app
-
-
-
-
 app = create_app()
-
-
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))

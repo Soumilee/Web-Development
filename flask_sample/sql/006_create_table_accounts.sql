@@ -1,10 +1,10 @@
 CREATE TABLE
     IS601_Accounts(
         id int auto_increment PRIMARY KEY,
-        account_number BIGINT(20) unique,
+        account_number VARCHAR(12) unique,
         user_id INT,
-        balance SMALLINT DEFAULT 0,
-        account_type TEXT,
+        balance INT DEFAULT 0,
+        account_type VARCHAR(20),
         created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
         modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES IS601_Users(id)
