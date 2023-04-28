@@ -5,4 +5,64 @@
     <div class="h3">Welcome</div>
     {{current_user.username}}
 </div>
+<body>
+    <h2 style="text-align: center">Things to do</h2>
+    <style>
+        a {
+            text-decoration: none;
+            color: red;
+        }
+    </style>
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <a target="_blank" href="{{url_for('sample.create_account')}}" style="width: 18rem;">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="title">Create Bank Account</h5>
+                        <p><button class="btn btn-primary">Go..</button></p>
+                    </div>            
+                </div>
+            </a>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <a target="_blank" href="{{url_for('sample.list_account')}}" style="width: 18rem;">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="title">My Accounts</h5>
+                        <p><button class="btn btn-primary">Go..</button></p>
+                    </div>
+                </div>
+            </a>  
+        </div>
+        <div class="col-lg-6 mb-4">          
+            <a target="_blank" href="#" style="width: 18rem;">
+                <div class ="card">
+                    <div class="card-body">
+                        <h5 class="title">Transfer Money</h5>
+                        <p><button class="btn btn-primary">Go..</button></p>
+                    </div>
+                </div>
+            </a> 
+        </div>
+        <div class="col-lg-6 mb-4">   
+            <a target="_blank" href="{{url_for('sample.deposit')}}" style="width: 18rem;">
+                <div class ="card">
+                    <div class="card-body">
+                        <h5 class="title">Deposit Money</h5>
+                        <p><button class="btn btn-primary">Go..</button></p>
+                    </div>
+                </div>
+            </a>  
+        </div>
+        <div class="col-lg-6 mb-4"> 
+            <a target="_blank" href="{{url_for('sample.withdraw')}}" style="width: 18rem;">
+                <div class ="card">
+                    <div class="card-body">
+                        <h5 class="title">Withdraw Money</h5>
+                        <p><button class="btn btn-primary">Go..</button></p>
+                    </div>
+                </div>
+            </a>
+        </div>             
+</body>
 {% endblock %}

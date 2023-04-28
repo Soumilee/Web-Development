@@ -1,7 +1,7 @@
 {% from "_dropdown_nav.html" import dropdown_nav %}
 <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Sample</a>
+        <a class="navbar-brand" href="#">Bank of Newark</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
             data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
             aria-expanded="false" aria-label="Toggle navigation">
@@ -25,10 +25,10 @@
                 </li>
                 <!-- samples nav -->
                 {% set samples = [
-                ("sample.add", "Add"),
-                ("sample.list", "List"),
+                ("sample.create_account", "Create Account"),
+                ("sample.list_account", "List Account")
                 ] %}
-                {{dropdown_nav("Samples", samples)}}
+                {{dropdown_nav("To Do", samples)}}
                 <!-- roles nav (requires admin )-->
                 {% if current_user.has_role("Admin") %}
                 {% set roles = [

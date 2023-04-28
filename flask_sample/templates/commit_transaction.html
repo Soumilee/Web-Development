@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block title %}Transfer Money{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="h1">Create Bank Account</div>
+    <div>
+        <form method="POST">
+            <div class="form-group mb-3">
+                <label class="form-label" for="src_acc_id">Choose Source Account Id :</label>
+                <input class="form-control" id="src_acc_id" name="src_acc_d" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="dropdown-menu" for="dest_acc_id">Choose Destination Account Id :</label>
+                <input class="dropdown-item" id="dest_acc_id" name="dest_acc_id" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="amt">Amount :</label>
+                <input class="form-control" id="amt" name="amt" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="type">Transaction Type :</label>
+                <input class="form-control" id="type" name="type" placeholder="deposit/withdraw"/>
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="memo">Memo :</label>
+                <input class="form-control" id="memo" name="memo" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Send Money" />
+        </form>
+        {% if resp %}
+        <div id="output">
+            {{resp}}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% end block %}

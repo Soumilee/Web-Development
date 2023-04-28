@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block title %}List Accounts{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="h1">List Accounts</div>
+    <form class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            <label class="form-label" for="limit">Limit</label>
+            <input class="form-control" type="number" min="1" max="5" id="limit" name="limit"
+                value="{{request.args.get('limit') or '5'}}" />
+        </div>
+        <div class="col-12">
+            <!-- hack to align button with inputs in inline form with labels-->
+            <div>&nbsp;</div>
+            <button type="submit" class="btn btn-primary mt-2">Filter</button>
+            <!--trick to reset a prefilled form to empty-->
+            <a href="?" class="btn btn-secondary mt-2">Reset</a>
+        </div>
+    </form>
+        <table class="table">
+            {% if resp and resp|length > 0 %}
+			<tr>
+                <th>Account ID :</th>
+				<th>Account Number :</th>
+				<th>User ID :</th>
+				<th>Balance :</th>
+				<th>Account Type :</th>
+				<th>Created :</th>
+                <th>Modified :</th>
+			</tr>
+			<!-- here is a for-loop to give us all the accounts -->
+			{% for acc in resp %}
+			<tr>
+                <td>{{ acc.id }}</td>
+				<td>{{ acc.account_number }}</td>
+				<td>{{ acc.user_id }}</td>
+				<td>${{ acc.balance }}</td>
+				<td>{{ acc.account_type }}</td>
+				<td>{{ acc.created }}</td>
+                <td>{{ acc.modified }}</td>
+                <td><a href="{{url_for('sample.list_transactions',acc_id=acc.id, **request.args)}}"
+                    class="btn btn-danger btn-sm">go</a>
+                </td>
+			    {% endfor %}
+            </tr>
+		</table>
+        {% else %}
+        <p>No results to show</p>
+        {% endif %}
+    </table>
+</div>
+</div>
+{% endblock %}
