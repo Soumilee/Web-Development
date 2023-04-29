@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %}Deposit Money{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+{% from "account_dropdown.html" import account_dropdown %}
+<div class="container-fluid">
+    <div class="h1">Deposit Money Into Account</div>
+    <div>
+        <form method="POST">
+            <div class="form-group mb-3">
+                <label class="form-label" for="acc_no">Account Number :</label>
+                {{ account_dropdown() }}
+                <label class="form-label" for="v">Type account number for confirmation</label>
+                <input class="form-control" id ="acc_no" name="acc_no" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="type">Account Type :</label>
+                <input class="form-control" id="type" name="type" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="amt">Amount :</label>
+                <input class="form-control" id="amt" name="amt" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="memo">Memo :</label>
+                <input class="form-control" id="memo" name="memo" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Deposit Amount" />
+        </form>
+        {% if resp %}
+        <div id="output">
+            {{resp}}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

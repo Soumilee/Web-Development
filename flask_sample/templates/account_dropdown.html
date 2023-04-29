@@ -1,0 +1,11 @@
+{% macro account_dropdown(val="") %}
+{% set accs = get_accounts() %}
+{# TODO DO NOT EDIT #}
+<select class="form-select mb-3" name="account" value="{{val or ''}}">
+    <option value="">Select Account</option>
+    {% for a in accs %}
+    {# example of using external data setting and casting #}
+    <option {{'selected' if val|string==a['id']|string}} value="{{a['id']}}">{{a['account_number']}}</option>
+    {% endfor %}
+</select>
+{% endmacro %}
