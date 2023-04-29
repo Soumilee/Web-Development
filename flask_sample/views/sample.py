@@ -60,7 +60,7 @@ def create_account():
     if account_type and deposit>=5:
         try:           
             account_no = "%0.12d" % random.randint(0,999999999999)
-            result = DB.insertOne("INSERT INTO IS601_Accounts (account_number,user_id,balance,account_type) VALUES(%s,%s, %s, %s)",account_no,user_id,deposit,account_type)
+            result = DB.insertOne("INSERT INTO IS601_Accounts (account_number,user_id,account_type) VALUES(%s,%s, %s, %s)",account_no,user_id,account_type)
             #after the new account is created an id is generated so we have to get that id and insert it into the transaction table
             if result.status:
                 acc_id = DB.db.fetch_eof_status()["insert_id"]
