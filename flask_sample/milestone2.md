@@ -129,4 +129,4 @@
 <tr><td> <em>Sub-Task 2: </em> Add a link to your herok prod project's login page</td></tr>
 <tr><td> <a rel="noreferrer noopener" target="_blank" href="https://is601-sg342-prod.herokuapp.com/login">https://is601-sg342-prod.herokuapp.com/login</a> </td></tr>
 </table></td></tr>
-<table><tr><td><em>Grading Link: </em><a rel="noreferrer noopener" href="https://learn.ethereallab.app/homework/IS601-004-S23/is601-milestone-2-bank-project/grade/sg342" target="_blank">Grading</a></td></tr></table>
+<table><tr><td><em>Grading Link: </em><a rel="noreferrer noopener" href="https://learn.ethereallab.app/homework/IS601-004-S23/is601-milestone-2-bank-project/grade/sg342" target="_blank">Grading</a></td></tr></table> 
