@@ -40,11 +40,10 @@ def commit_transaction(src, dest, change, type, memo):
         return False
 
 def update_balance(acc_id):
-    from sql.db import DB
-    user_id = current_user.get_id()    
+    from sql.db import DB 
     try:
         result = DB.update("""UPDATE IS601_Accounts set balance = (SELECT IFNULL(SUM(balance_change), 0) 
-        FROM IS601_Transactions WHERE account_src_id = %(acct)s)""", {"acct":int(acc_id)})
+        FROM IS601_Transactions WHERE account_src_id = %(acct)s) WHERE id = %(acct)s""", {"acct":int(acc_id)})
         if result.status:
             return True
     except Exception as e:
@@ -56,11 +55,14 @@ def update_balance(acc_id):
 def create_account():
     account_type = request.form.get("type","checking")
     deposit = request.form.get("deposit", 0,int)
+    first_name = request.form.get('fname')
+    last_name = request.form.get('lname')
     user_id = current_user.get_id()  
     if account_type and deposit>=5:
         try:           
             account_no = "%0.12d" % random.randint(0,999999999999)
-            result = DB.insertOne("INSERT INTO IS601_Accounts (account_number,user_id,account_type) VALUES(%s,%s, %s, %s)",account_no,user_id,account_type)
+            result = DB.insertOne("INSERT INTO IS601_Accounts (account_number,user_id,account_type) VALUES(%s,%s, %s)",
+                                  account_no,user_id,account_type)
             #after the new account is created an id is generated so we have to get that id and insert it into the transaction table
             if result.status:
                 acc_id = DB.db.fetch_eof_status()["insert_id"]
@@ -165,28 +167,27 @@ def withdraw():
     amt = request.form.get("amt",1,int)
     memo = request.form.get("memo"," ")
     if acc_no is None:
-        flash("Please select the account for deposit","error")
-    else:
-        get_balance = DB.selectOne("SELECT balance FROM IS601_Accounts WHERE account_number = %s",acc_no)
-        print(get_balance)
-        get_acc_id = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s",acc_no)
-        print(get_acc_id)
-        if get_acc_id.status and get_balance.status:
-            row = get_acc_id.row
-            acc_id = row["id"]
-            row1 = get_balance.row
-            bal = row1["balance"]
-            get_world_id = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s","000000000000")
-            if get_world_id.status:
-                row = get_world_id.row
-                world_id = row["id"]
+        flash("Please select the account for deposit","error")        
     if type is None:
-        flash("Please select the type of account","error")
+        flash("Please select the type of transaction","error")
     if amt<=1 or amt > bal:
         flash('Please select an amount greater than 1$ and less than your total balance',"error")
     else:
         if request.method == "POST":
             try:
+                get_balance = DB.selectOne("SELECT balance FROM IS601_Accounts WHERE account_number = %s",acc_no)
+                print(get_balance)
+                get_acc_id = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s",acc_no)
+                print(get_acc_id)
+                if get_acc_id.status and get_balance.status:
+                    row = get_acc_id.row
+                    acc_id = row["id"]
+                    row1 = get_balance.row
+                    bal = row1["balance"]
+                get_world_id = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s","000000000000")
+                if get_world_id.status:
+                    row = get_world_id.row
+                    world_id = row["id"]
                 result = commit_transaction(world_id,acc_id,amt,type,memo)
                 if result.status:
                     flash("The money has been withdrawn","message")
@@ -194,3 +195,75 @@ def withdraw():
                 flash(e,"danger")
     return render_template("withdraw_from_acc.html")
 
+@sample.route('exttransaction',methods = ['GET','POST'])
+def external_transaction():
+    src_acc_no = request.form.get("src_acc_no")
+    dest_acc_no = request.form.get("dest_acc_no")
+    amt = request.form.get('amt',0,int)
+    memo = request.form.get('memo'," ")
+    type = request.form.get('type','external transaction')
+    get_balance = DB.selectOne("SELECT balance FROM IS601_Accounts WHERE account_number = %s",src_acc_no)
+    if get_balance.status:
+        row1 = get_balance.row
+        print(row1)
+        balance = row1['balance']
+    query1 = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s",src_acc_no)
+    if query1.status:
+        row = query1.row
+        src_acc_id = row['id']
+    if src_acc_no is None:
+        flash("Please enter the source account","error")
+    if dest_acc_no is None:
+        flash('Please enter destination account','error')
+    else:
+        query = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s",dest_acc_no)
+        if query.status:
+            row = query.row
+            dest_acc_id = row['id']
+    if amt>balance:
+        flash('The transfer amount cannot be greater than balance','error')
+    else:
+        if request.method == "POST":
+            try:
+                result = commit_transaction(src_acc_id,dest_acc_id,amt,type,memo)
+                if result.status:
+                    flash("The money has been submitted","info")
+            except Exception as e:
+                flash(e,'danger')
+    return render_template('external_transactions.html')
+
+@sample.route('inttransaction',methods = ['GET','POST'])
+def internal_transaction():
+    src_acc_no = request.form.get("src_acc_no")
+    dest_acc_no = request.form.get("dest_acc_no")
+    amt = request.form.get("amt")
+    type = request.form.get("type")
+    memo = request.form.get("memo")
+    if src_acc_no is None:
+        flash("Please enter the source account","error")       
+    if dest_acc_no is None:
+        flash('Please enter destination account','error')
+    else: # learned this query from https://www.tutorialspoint.com/find-records-with-a-specific-last-digit-in-column-with-mysql
+        query = DB.selectOne("SELECT id FROM IS601_Accounts WHERE RIGHT(account_number,4)=%s",dest_acc_no)
+        if query.status: 
+            row = query.row
+            dest_acc_id = row['id']
+    get_balance = DB.selectOne("SELECT balance FROM IS601_Accounts WHERE account_number = %s",src_acc_no)
+    if get_balance.status:
+        row = get_balance.row
+        balance = row['balance']
+    query1 = DB.selectOne("SELECT id FROM IS601_Accounts WHERE account_number = %s",src_acc_no)
+    if query1.status:
+        row = query1.row
+        src_acc_id = row['id']
+    if amt>balance:
+        flash('The transfer amount cannot be greater than balance','error')
+    else:
+        if request.method == "POST":
+            try:
+                result = commit_transaction(src_acc_id,dest_acc_id,amt,type,memo)
+                if result.status:
+                    flash("The money has been submitted","info")
+            except Exception as e:
+                flash(e,'danger')
+    return render_template('internal_transactions.html')

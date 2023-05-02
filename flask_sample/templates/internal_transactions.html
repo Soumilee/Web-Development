@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}Internal Transfer{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+{% from "account_dropdown.html" import account_dropdown %}
+<div class="container-fluid">
+    <div class="h1">Transfer Money Internally</div>
+    <div>
+        <form method="POST">
+            <div class="form-group mb-3">
+                <label class="form-label" for="src_acc_no">Source Account Number :</label>
+                {{ account_dropdown() }}
+                <label class="form-label" for="v">Type account number for confirmation</label>
+                <input class="form-control" id ="src_acc_no" name="src_acc_no" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="dest_acc_no">Destination Account Number :</label>
+                {{ account_dropdown() }}
+                <label class="form-label" for="v">Type account number for confirmation</label>
+                <input class="form-control" id ="dest_acc_no" name="dest_acc_no" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="type">Transaction Type :</label>
+                <input class="form-control" id="type" name="type" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="amt">Amount :</label>
+                <input class="form-control" id="amt" name="amt" />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="memo">Memo :</label>
+                <input class="form-control" id="memo" name="memo" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Transfer Amount" />
+        </form>
+        {% if resp %}
+        <div id="output">
+            {{resp}}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
