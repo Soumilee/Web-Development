@@ -84,10 +84,11 @@ def create_app(config_filename=''):
         @app.template_global()
         def get_accounts():
             from sql.db import DB
+            user_id = current_user.get_id()
             try:
                 print("get accounts")
                 # note this triggers for GET and POST
-                result = DB.selectAll("SELECT id, account_number, balance FROM IS601_Accounts")
+                result = DB.selectAll("SELECT id, account_number, balance FROM IS601_Accounts WHERE user_id = %s",user_id)
                 if result.status:
                     return result.rows or []
             except Exception as e:
