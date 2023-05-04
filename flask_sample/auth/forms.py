@@ -36,6 +36,8 @@ class LoginForm(AuthForm):
             self.password.validators.pop(1)
         del self.confirm
         del self.username
+        del self.first_name
+        del self.last_name
         
     # https://wtforms.readthedocs.io/en/stable/validators/#custom-validators
     def validate_email(form, field):
