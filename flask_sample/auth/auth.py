@@ -29,12 +29,14 @@ def register():
     # wtform validators are both client-side and server-side
     if form.validate_on_submit():
         email = form.email.data
+        first_name = form.first_name.data
+        last_name = form.last_name.data
         password = form.password.data
         username = form.username.data
         try:
             hash = bcrypt.generate_password_hash(password)
             # save the hash, not the plaintext password
-            result = DB.insertOne("INSERT INTO IS601_Users (email, username, password) VALUES (%s, %s, %s)", email, username, hash)
+            result = DB.insertOne("INSERT INTO IS601_Users (first_name, last_name, email, username, password) VALUES (%s, %s, %s, %s, %s)",first_name,last_name, email, username, hash)
             if result.status:
                 flash("Successfully registered","success")
         except Exception as e:
@@ -43,14 +45,18 @@ def register():
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
+    print("Entered login form")
     form = LoginForm()
     if form.validate_on_submit():
         is_valid = True
         email = form.email.data # email or username
         password = form.password.data
+        print("trying to print passwoed")
+        print(email,password)
         if is_valid:
             try:
                 result = DB.selectOne("SELECT id, email, username, password FROM IS601_Users where email= %(email)s or username=%(email)s", {"email":email})
+                print(result)
                 if result.status and result.row:
                     hash = result.row["password"]
                     if bcrypt.check_password_hash(hash, password):
@@ -86,7 +92,10 @@ def login():
 
             except Exception as e:
                 flash(str(e), "danger")
+        else:
+            print("not valid")
     return render_template("login.html", form=form)
+   
 
 @auth.route("/landing-page", methods=["GET"])
 @login_required

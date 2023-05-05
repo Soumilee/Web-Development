@@ -5,7 +5,7 @@
     <option value="">Select Account</option>
     {% for a in accs %}
     {# example of using external data setting and casting #}
-    <option {{'selected' if val|string==a['id']|string}} value="{{a['id']}}">{{a['account_number']}}</option>
+    <option {{'selected' if val|string==a['id']|string}} value="{{a['id']}}">{{a['id']}} {{a['account_number']}} {{a['balance']}} </option>
     {% endfor %}
 </select>
 {% endmacro %}

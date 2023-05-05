@@ -3,7 +3,9 @@ INSERT INTO
         id,
         username,
         email,
-        password
+        password,
+        first_name,
+        last_name
     )
-VALUES (-1, 'Admin', 'superuser@gmail.com', 'abcd') ON DUPLICATE KEY
+VALUES (-1, 'Admin', 'superuser@gmail.com', 'abcd','Super','User') ON DUPLICATE KEY
 UPDATE username = username;

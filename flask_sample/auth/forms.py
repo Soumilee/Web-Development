@@ -14,6 +14,8 @@ def is_valid_username(username):
 class AuthForm(FlaskForm):
     # shared form that groups most of our validations together to reduce repetition
     username = StringField("username", validators=[DataRequired(), Length(2, 30)])
+    first_name = StringField("first_name",validators=[DataRequired(), Length(2,60)])
+    last_name = StringField("last_name",validators=[DataRequired(), Length(2,60)])
     email = EmailField("email", validators=[DataRequired(), Email()])
     password = PasswordField("password", validators=[DataRequired(), EqualTo('confirm', message='Passwords must match'), Length(8)])
     confirm = PasswordField("confirm", validators=[DataRequired(),  EqualTo('password', message='Passwords must match'),Length(8)])
@@ -21,9 +23,11 @@ class AuthForm(FlaskForm):
         print("checking ", field.data)
         is_valid_username(field.data)
 class RegisterForm(AuthForm):
+    print("entered registered para")
     submit = SubmitField("Register")
 
 class LoginForm(AuthForm):
+    print("now entering this para")
     email = StringField("email or username", validators=[DataRequired()]) #EmailField("email", validators=[DataRequired(), Email()])
     submit = SubmitField("Login")
     def __init__(self, *args, **kwargs):
@@ -32,6 +36,8 @@ class LoginForm(AuthForm):
             self.password.validators.pop(1)
         del self.confirm
         del self.username
+        del self.first_name
+        del self.last_name
         
     # https://wtforms.readthedocs.io/en/stable/validators/#custom-validators
     def validate_email(form, field):
