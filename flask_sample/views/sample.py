@@ -237,13 +237,16 @@ def external_transaction():
                     row = query.row
                     user_id = row['id']   
                 else:
-                    flash('This user does not exist','error')  
+                    flash('This user does not exist','error') 
             if dest_acc_no is None:
                 flash('Please enter destination account','error')
+
             else: # learned this query from https://www.tutorialspoint.com/find-records-with-a-specific-last-digit-in-column-with-mysql
-                query = DB.selectOne("SELECT id FROM IS601_Accounts WHERE RIGHT(account_number,4)=%s AND user_id = %s",dest_acc_no,user_id)
-                if query.status: 
-                    row = query.row
+                print(user_id)
+                query1 = DB.selectOne("SELECT id FROM IS601_Accounts WHERE RIGHT(account_number,4)=%s AND user_id = %s",dest_acc_no,user_id)
+                print(query1.row)
+                if query1.status: 
+                    row = query1.row
                     dest_acc_id = row['id']
                 else:
                     flash('This account does not exist','error')
@@ -261,4 +264,5 @@ def external_transaction():
                     flash("The money has been submitted","info")
         except Exception as e:
             flash(e,'danger')
+            print(Exception,e)
     return render_template('external_transactions.html')
