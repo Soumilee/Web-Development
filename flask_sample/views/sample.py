@@ -235,7 +235,9 @@ def external_transaction():
                 query = DB.selectOne("SELECT id FROM IS601_Users WHERE last_name = %s",last_name)
                 if query.status:
                     row = query.row
-                    user_id = row['id']     
+                    user_id = row['id']   
+                else:
+                    flash('This user does not exist','error')  
             if dest_acc_no is None:
                 flash('Please enter destination account','error')
             else: # learned this query from https://www.tutorialspoint.com/find-records-with-a-specific-last-digit-in-column-with-mysql
@@ -243,10 +245,14 @@ def external_transaction():
                 if query.status: 
                     row = query.row
                     dest_acc_id = row['id']
+                else:
+                    flash('This account does not exist','error')
                 get_balance = DB.selectOne("SELECT balance FROM IS601_Accounts WHERE id = %s",src_acc_id)
                 if get_balance.status:
                     row = get_balance.row
                     balance = row['balance']
+            if amt < 0:
+                flash('The transfer cannot be negative','error')
             if amt>balance:
                 flash('The transfer amount cannot be greater than balance','error')
             else:
