@@ -203,6 +203,10 @@ def internal_transaction():
                 bal = row['balance']
             if dest_acc_id is None:
                 flash('Please enter destination account','error')
+            if amt < 0:
+                flash('The transfer amount cannot be negative','error')
+            if src_acc_id == dest_acc_id:
+                flash('Cannot transfer to same account','error')
             if amt > bal:
                 flash('The transfer amount cannot be greater than balance','error')
             else:
